@@ -143,7 +143,7 @@ client.on("message", async (message) => {
       const node = manager.nodes.get();
       if (!node) return message.channel.send(s("Sorry, there is no node available."));
 
-      const player = node.players.get(message.guild.id), queue = queues[message.guild.id];
+      const player = node.players.get(message.guild.id);
       if (!player) return message.channel.send(s(`Use \`!>play <song name or url>\` to start a queue`));
 
       await player.setVolume(parseInt(args[0]));
