@@ -65,7 +65,11 @@ export class Manager extends EventEmitter {
   }
 
   public get players(): Collection<string, Player> {
-    return this.nodes.reduce((c, n) => n.players.each(p => c.set(p.guildId, p)));
+    const collection: Collection<string, Player> = new Collection();
+    for (const node of this.nodes.values())
+      for (const player of node.players.values())
+        collection.set(player.guildId, player);
+    return collection;
   }
 
   /**

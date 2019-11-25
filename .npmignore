@@ -1,0 +1,9 @@
+node_modules/
+tsconfig.json
+README.md
+*.lock
+.gitignore
+test/
+src/
+.idea/
+.git/

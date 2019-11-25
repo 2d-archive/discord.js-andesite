@@ -37,7 +37,7 @@ The example shows most of the features that this client and andesite supports.
 
 > A list of bots that use this package.
 
-😦 none at the moment.
+- [Erika Costell](https://github.com/lolwastedjs/erika-costell) (example bot)
 
 [Add yours!](https://discord.gg/kzaSTx)
 

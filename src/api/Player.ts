@@ -45,7 +45,7 @@ export class Player extends EventEmitter {
   /**
    * The current volume.
    */
-  public volume: number = 100;
+  public volume: number;
   /**
    * The current track that is being played.
    */
@@ -88,6 +88,7 @@ export class Player extends EventEmitter {
 
     this._endpoint = `/player/${options.guildId}`;
     this.guildId = options.guildId;
+    this.volume = node.manager.defaultVolume;
     this.channelId = options.channelId;
     this.rest = node.rest;
   }
