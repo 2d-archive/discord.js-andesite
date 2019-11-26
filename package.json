@@ -1,6 +1,6 @@
 {
   "name": "discord.js-andesite",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A reliable, feature rich and stable andesite client for discord.js master.",
   "dependencies": {
     "ws": "^7.2.0",
@@ -23,6 +23,7 @@
   "bugs": {
     "url": "https://github.com/LolWastedJS/discord.js-andesite/issues"
   },
+  "typings": "./build/",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lolwastedjs/discord.js-andesite.git"
