@@ -3,9 +3,7 @@ import {Player, PlayerOptions} from "../api/Player";
 import {Node} from "../api/Node";
 
 export class PlayerStore extends Collection<string, Player> {
-  public constructor(
-    public node: Node
-  ) {
+  public constructor(public node: Node) {
     super();
   };
 
@@ -13,8 +11,12 @@ export class PlayerStore extends Collection<string, Player> {
     return <any>Collection;
   }
 
+  /**
+   * Creates a player.
+   * @param options The guild and channel ID.
+   */
   public create(options: PlayerOptions): Player {
-    const player = new Player(this.node, options);
+    const player = new (this.node.manager.player)(this.node, options);
     this.set(options.guildId, player);
     return player;
   }
@@ -27,6 +29,11 @@ export class PlayerStore extends Collection<string, Player> {
     return super.delete(guild);
   }
 
+  /**
+   * Moves a player from one node to another.
+   * @param player
+   * @param node
+   */
   public async move(player: Player, node: Node) {
     await player.destroy();
 

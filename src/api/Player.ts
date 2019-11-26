@@ -183,7 +183,7 @@ export class Player extends EventEmitter {
    * @memberof Player
    */
   public destroy() {
-    return this.rest._delete(this._endpoint);
+    return this.rest.delete(this._endpoint);
   }
 
   /**
@@ -195,11 +195,11 @@ export class Player extends EventEmitter {
   public async _update(pk: any) {
     switch (pk.op) {
       case "player-update":
-        this._player = pk;
-        this.filters = (pk).state.filters;
-        this.volume = (pk).state.volume;
-        this.position = (pk).state.position || this.position || 0;
-        this.paused = (pk).state.paused;
+        this._player = pk.state;
+        this.filters = pk.state.filters;
+        this.volume = pk.state.volume;
+        this.position = pk.state.position || this.position || 0;
+        this.paused = pk.state.paused;
         break;
       case "event":
         const emit = (event: string, data: any) => this.listenerCount(event) ? this.emit(event, data) : null;

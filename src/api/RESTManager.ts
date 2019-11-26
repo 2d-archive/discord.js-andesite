@@ -3,10 +3,8 @@ import {Node} from "./Node";
 import {EventEmitter} from "events";
 
 export class RESTManager extends EventEmitter {
-
   public readonly url: string;
   public axios: AxiosInstance;
-
   public constructor(node: Node) {
     super();
 
@@ -19,6 +17,11 @@ export class RESTManager extends EventEmitter {
     if (node["auth"]) this.axios.defaults.headers["Authorization"] = node["auth"];
   }
 
+  /**
+   * Makes a get request to the node.
+   * @param endpoint The endpoint to make a request to.
+   * @param config
+   */
   public get(endpoint: string, config?: AxiosRequestConfig): Promise<any> {
     return new Promise((reso, reje) => {
       return this.axios.get(endpoint, config)
@@ -30,6 +33,12 @@ export class RESTManager extends EventEmitter {
     });
   }
 
+  /**
+   * Makes a POST request to the node
+   * @param endpoint The endpoint to make a request to.
+   * @param data The data to post.
+   * @param config
+   */
   public post(endpoint: string, data?: any, config?: AxiosRequestConfig): Promise<any> {
     return new Promise((reso, reje) => {
       return this.axios.post(endpoint, data, config)
@@ -41,6 +50,12 @@ export class RESTManager extends EventEmitter {
     });
   }
 
+  /**
+   * Makes a PATCH request to the node.
+   * @param endpoint The endpoint to make a request to.
+   * @param data The data to patch.
+   * @param config
+   */
   public patch(endpoint: string, data?: any, config?: AxiosRequestConfig): Promise<any> {
     return new Promise((reso, reje) => {
       return this.axios.patch(endpoint, data, config)
@@ -52,7 +67,13 @@ export class RESTManager extends EventEmitter {
     });
   }
 
-  public _delete(endpoint: string, config?: AxiosRequestConfig): Promise<any> {
+  /**
+   * Makes a DELETE request to the node.
+   * @param endpoint The endpoint to make a request to.
+   * @param config
+   * @private
+   */
+  public delete(endpoint: string, config?: AxiosRequestConfig): Promise<any> {
     return new Promise((reso, reje) => {
       return this.axios.delete(endpoint, config)
       .then((res: AxiosResponse) => {

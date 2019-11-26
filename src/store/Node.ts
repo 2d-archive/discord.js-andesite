@@ -4,9 +4,7 @@ import {Manager} from "../Manager";
 import {NodeOptions, NodeStatus} from "../interfaces/Node";
 
 export class NodeStore extends Collection<string, Node> {
-  public constructor(
-    public readonly manager: Manager
-  ) {
+  public constructor(public readonly manager: Manager) {
     super();
   }
 
@@ -14,6 +12,9 @@ export class NodeStore extends Collection<string, Node> {
     return <any>Collection;
   }
 
+  /**
+   * A collection of ideal nodes.
+   */
   public get ideal(): Collection<string, Node> {
     return this.filter(node => {
       if (node.connected) node.getStats();
@@ -25,21 +26,34 @@ export class NodeStore extends Collection<string, Node> {
     });
   }
 
-  public get(key?: string) {
-    return key ? super.get(key) : this.ideal.first();
+  public get(key?: string): Node {
+    return <Node>(key ? super.get(key) : this.ideal.first());
   }
 
+  /**
+   * Creates a node.
+   * @param options
+   */
   public create(options: NodeOptions) {
     const node = new Node(this.manager, options);
     this.set(node.name, node);
     return node;
   }
 
+  /**
+   * Creates many nodes.
+   * @param data
+   */
   public createMany(...data: NodeOptions[]): void {
     for (const node of data)
       this.create(node);
   }
 
+  /**
+   * Removes a node, and moves all the existing players assigned to it.
+   * @param node
+   * @param reason
+   */
   public async remove(node: Node, reason: string) {
     if (node.state === NodeStatus.DISCONNECTED) return;
     try {
