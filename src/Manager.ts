@@ -4,8 +4,7 @@ import {NodeStore} from "./store/Node";
 import {Player} from "./api/Player";
 import {NodeOptions} from "./interfaces/Node";
 import {Node} from "./api/Node";
-import {LoadedTracks} from "./interfaces/Entities";
-import {TrackInfo} from "../build";
+import {LoadedTracks, TrackInfo} from "./interfaces/Entities";
 
 export interface ManagerOptions {
   /**
