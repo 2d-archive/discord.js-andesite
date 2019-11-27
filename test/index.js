@@ -156,7 +156,8 @@ client.on("message", async (message) => {
       const player = node.players.get(message.guild.id);
       if (!player) return message.channel.send(s(`Use \`!>play <song name or url>\` to start a queue`));
 
-      await player.stop();
+      queues[message.guild.id] = [];
+	    await player.stop();
       return message.channel.send(s(`Stopped the player, use \`i>play <song name or url>\` to play a song`));
     }
   }

@@ -225,7 +225,7 @@ export class Node extends EventEmitter {
     this.state = NodeStatus.DISCONNECTED;
     this.ws!.removeAllListeners();
     this.ws = null;
-    this.manager.emit("close", name, reason);
+    this.manager.emit("close", this.name, reason);
     try {
       if (this.tries < this.manager.reconnectTries) {
         this.tries++;

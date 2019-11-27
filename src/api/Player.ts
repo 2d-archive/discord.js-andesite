@@ -175,7 +175,7 @@ export class Player extends EventEmitter {
     this.playing = false;
     this.timestamp = null;
     this.track = null;
-    return this.rest.post(this._endpoint);
+    return this.rest.post(`${this._endpoint}/stop`)
   }
 
   /**
