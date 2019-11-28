@@ -2,5 +2,12 @@
   "extends": "@ayanaware/ts/config",
   "compilerOptions": {
     "esModuleInterop": true
+  },
+  "typedocOptions": {
+    "mode": "modules",
+    "out": "docs",
+    "hideGenerator": true,
+    "ignoreCompilerErrors": true,
+    "readme": "README.md",
   }
 }

@@ -1,10 +1,7 @@
-
-<div style="align-items: center;">
-    <a href="https://www.codacy.com/manual/LolWastedJS/discord.js-andesite?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=LolWastedJS/discord.js-andesite&amp;utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/e9fe39139915430a812af57f87dad66e"/></a>
-    <a href="https://npmjs.com/discord.js-andesite"><img src="https://img.shields.io/npm/dt/discord.js-andesite"/></a>
-    <a href="https://david-dm.org/lolwastedjs/discord.js-andesite" title="dependencies status"><img src="https://david-dm.org/lolwastedjs/discord.js-andesite/status.svg"/></a>    
-    <a href="https://david-dm.org/lolwastedjs/discord.js-andesite?type=dev" title="devDependencies status"><img src="https://david-dm.org/lolwastedjs/discord.js-andesite/dev-status.svg"/></a>
-</div>
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/e9fe39139915430a812af57f87dad66e)](https://www.codacy.com/manual/LolWastedJS/discord.js-andesite?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=LolWastedJS/discord.js-andesite&amp;utm_campaign=Badge_Grade)
+[![npm](https://img.shields.io/npm/dt/discord.js-andesite?color=red&label=Total%20Downloads&logo=npm&style=flat-square)](https://npmjs.com/discord.js-andesite)
+[![dependencies Status](https://david-dm.org/lolwastedjs/discord.js-andesite/status.svg)](https://david-dm.org/lolwastedjs/discord.js-andesite)
+[![devDependencies Status](https://david-dm.org/lolwastedjs/discord.js-andesite/dev-status.svg)](https://david-dm.org/lolwastedjs/discord.js-andesite?type=dev)
 
 # discord.js-andesite
 
@@ -17,7 +14,7 @@ An [andesite-node](https://github.com/natanbc/andesite-node) client for [discord
 [Support](https://discord.gg/kzaSTx) •
 [Github](https://github.com/lolwastedjs/discord.js-andesite) •
 [NPM](https://npmjs.com/discord.js-andesite) •
-Documentation (coming soon)
+[Documentation](https://melike2d.ml/discord.js-andesite)
 
 ### Relevant Links
 
@@ -40,7 +37,6 @@ An andesite node via Github [Releases](https://github.com/natanbc/andesite-node/
 - Manager
 ```js
 const { Manager } = require("discord.js-andesite");
-
 const manager = new Manager(client, {
   nodes: [{
     host: "localhost",
@@ -53,7 +49,6 @@ const manager = new Manager(client, {
   player, // The player class to use, you should omit this if you don't know what you're doing.
   reconnectTries: 3 // the amount of tries to reconnect.
 });
-
 client.on("ready", async () => {
   await manager.init(client.user.id);
 });
@@ -74,17 +69,16 @@ async function getSongs(query) {
 // joining
 const node = manager.nodes.get(); // returns the ideal if no key is provided.
 if (!node) throw new Error("No available nodes.");
-
 const player = node.join({ 
   guildId: message.guild.id,
   channelId: message.member.voice.channelId
 });
 ```
+
 ```js
 // leaving
 const node = manager.nodes.get(); // returns the ideal if no key is provided.
 if (!node) throw new Error("No available nodes.");
-
 node.leave(message.guild.id);
 ```
 
@@ -109,4 +103,4 @@ The example shows most of the features that this client and andesite supports.
 ##
 
 Copyright (c) MeLike2D 2017 - 2019.  
-[Support](https://discord.gg/kzaSTx) • [Website (coming soon)](https://melike2d.me/)
+[Support](https://discord.gg/kzaSTx) • [Website](https://melike2d.me/)
