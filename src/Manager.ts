@@ -147,7 +147,7 @@ export class Manager extends EventEmitter {
     return new Promise((res, rej) => {
       if (!node) return rej(new Error(`No node available.`));
       return node.rest.post("/decodetracks", {tracks: Array.isArray(tracks) ? tracks : [tracks]})
-      .then(res)
+      .then((_: TrackInfo[]) => res(_))
       .catch(rej);
     });
   }

@@ -1,15 +1,6 @@
 {
+  "extends": "@ayanaware/ts/config",
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "es2017",
-    "declaration": true,
-    "outDir": "./build",
-    "sourceMap": true,
-    "strict": true,
-    "esModuleInterop": true,
-    "removeComments": false
-  },
-  "exclude": [
-    "node_modules"
-  ]
+    "esModuleInterop": true
+  }
 }

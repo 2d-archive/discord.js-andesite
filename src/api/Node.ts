@@ -104,7 +104,7 @@ export class Node extends EventEmitter {
         return rej(false);
       }
 
-      this.ws.send(data, e => e ? rej(e) : res(true));
+      this.ws.send(data, (e: any) => e ? rej(e) : res(true));
     });
   }
 
@@ -226,7 +226,7 @@ export class Node extends EventEmitter {
     this.state = NodeStatus.DISCONNECTED;
     this.ws.removeAllListeners();
     delete this.ws;
-    this.manager.emit("close", this.name, reason);
+    this.manager.emit("close", this.name, reason, code);
     try {
       if (this.tries < this.manager.reconnectTries) {
         this.tries++;
@@ -235,7 +235,7 @@ export class Node extends EventEmitter {
         await this.manager.nodes.remove(this, `Node couldn't reconnect in ${this.tries} tries.`);
       }
     } catch (e) {
-      this.manager.emit('error', name, e);
+      this.manager.emit('error', this.name, e);
     }
   }
 }

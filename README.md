@@ -1,3 +1,11 @@
+
+<div style="align-items: center;">
+    <a href="https://www.codacy.com/manual/LolWastedJS/discord.js-andesite?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=LolWastedJS/discord.js-andesite&amp;utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/e9fe39139915430a812af57f87dad66e"/></a>
+    <a href="https://npmjs.com/discord.js-andesite"><img src="https://img.shields.io/npm/dt/discord.js-andesite"/></a>
+    <a href="https://david-dm.org/lolwastedjs/discord.js-andesite" title="dependencies status"><img src="https://david-dm.org/lolwastedjs/discord.js-andesite/status.svg"/></a>    
+    <a href="https://david-dm.org/lolwastedjs/discord.js-andesite?type=dev" title="devDependencies status"><img src="https://david-dm.org/lolwastedjs/discord.js-andesite/dev-status.svg"/></a>
+</div>
+
 # discord.js-andesite
 
 An [andesite-node](https://github.com/natanbc/andesite-node) client for [discord.js](https://npmjs.com/discord.js) master.
