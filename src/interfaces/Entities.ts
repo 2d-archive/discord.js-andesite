@@ -1,8 +1,6 @@
 export type LoadTypes = "TRACK_LOADED" | "SEARCH_RESULT" | "PLAYLIST_LOADED" | "NO_MATCHES" | "LOAD_FAILED";
 export type FilterNames = "equalizer" | "karaoke" | "timescale" | "tremolo" | "vibrato" | "volume";
 
-export type OLiteral = { [key: string]: any };
-
 export interface LoadedTracks {
   loadType: LoadTypes;
   tracks?: TrackInfo[];

@@ -41,11 +41,11 @@ export class Player extends EventEmitter {
   /**
    * Whether the player is paused or not.
    */
-  public paused = false;
+  public paused: boolean = false;
   /**
    * The current volume.
    */
-  public volume: number;
+  public volume: number = 100;
   /**
    * The current track that is being played.
    */
@@ -53,7 +53,7 @@ export class Player extends EventEmitter {
   /**
    * Whether the player is playing a track or not.
    */
-  public playing = false;
+  public playing: boolean = false;
   /**
    * Timestamp of which the player started playing a track.
    */
@@ -182,7 +182,7 @@ export class Player extends EventEmitter {
    * Destroys the player.
    * @memberof Player
    */
-  public destroy() {
+  public destroy(): Promise<AndesitePlayer> {
     return this.rest.delete(this._endpoint);
   }
 
@@ -192,7 +192,7 @@ export class Player extends EventEmitter {
    * @private
    * @memberof Player
    */
-  public async _update(pk: any) {
+  public async _update(pk: { [key: string]: any }) {
     switch (pk.op) {
       case "player-update":
         this._player = pk.state;
@@ -253,7 +253,7 @@ export class Player extends EventEmitter {
    * @private
    * @memberof Player
    */
-  public async _voiceUpdate(pk: Packet) {
+  public async _voiceUpdate(pk: Packet): Promise<void> {
     switch (pk.t) {
       case "VOICE_STATE_UPDATE":
         this.voiceState = pk.d;
