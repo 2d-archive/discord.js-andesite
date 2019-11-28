@@ -52,7 +52,7 @@ client.on("message", async (message) => {
           await queues[message.guild.id].shift();
           if (queues[message.guild.id][0]) {
             await player.play(queues[message.guild.id][0].track);
-            return message.channel.send(s(`Playing **[${queues[message.guild.id][0].info.title}](${queues[message.guild.id][0].info.uri})**`))
+            return message.channel.send(s(`Playing **[${queues[message.guild.id][0].info.title}](${queues[message.guild.id][0].info.uri})**`));
           }
           delete queues[message.guild.id];
           await message.channel.send(s(`No more music left in the queue, leaving.`));
@@ -89,14 +89,14 @@ client.on("message", async (message) => {
       return message.channel.send(s(`${args[0] === "disable" ? "Disabled" : "Enabled"} the nightcore mode!\n*takes a few seconds to take affect*`));
     }
     case "nowplaying": {
-      const node = manager.nodes.get();
-      if (!node) return message.channel.send(s("Sorry, there is no node available."));
+	    const node = manager.nodes.get();
+	    if (!node) return message.channel.send(s("Sorry, there is no node available."));
 
-      const player = node.players.get(message.guild.id);
-      if (!player) return message.channel.send(s(`Use \`!>play <song name or url>\` to start a queue`));
+	    const player = node.players.get(message.guild.id);
+	    if (!player) return message.channel.send(s(`Use \`!>play <song name or url>\` to start a queue`));
 
-      const current = await node.rest.get(`/decodetrack?track=${player.track}`);
-      return message.channel.send(s(require('./util').playerEmbed(player, current)))
+	    const current = await node.rest.get(`/decodetrack?track=${player.track}`);
+	    return message.channel.send(s(require('./util').playerEmbed(player, current)));
     }
     case "bassboost": {
       const node = manager.nodes.get();

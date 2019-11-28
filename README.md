@@ -40,7 +40,7 @@ const manager = new Manager(client, {
     name: "main", // name of the node (used for fetching it)
     auth: "nicepassword" // you can omit this if you didn't set a password
   }],
-  defaultVolume: 50, // I recommend setting it to 50
+  defaultVolume: 50, // the default volume for players.
   restTimeout: 15000, // the timeout used for rest requests (default is 10000)
   player, // The player class to use, you should omit this if you don't know what you're doing.
   reconnectTries: 3 // the amount of tries to reconnect.
@@ -51,7 +51,7 @@ client.on("ready", async () => {
 });
 ```
 
-- Fetching Songs
+- Fetching Songs  
 Andesite automatically does `ytsearch:` if you have the option enabled in your `application.conf`.
 Manager#search returns the response of `/loadtracks` so check the andesite docs for reference.
 ```js
@@ -87,7 +87,6 @@ The example shows most of the features that this client and andesite supports.
 - player methods & properties (play, pause, resume, setVolume, filter, stop, position, paused)
 - search method
 - rest manager
-
 
 ## Featured
 

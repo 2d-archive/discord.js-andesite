@@ -8,7 +8,7 @@ export class NodeStore extends Collection<string, Node> {
     super();
   }
 
-  static get [Symbol.species]() {
+  static get [Symbol.species](): typeof Map {
     return <any>Collection;
   }
 
@@ -20,8 +20,8 @@ export class NodeStore extends Collection<string, Node> {
       if (node.connected) node.getStats();
       return node.connected;
     }).sort((a, b) => {
-      const a_load = a.stats!.cpu ? a.stats!.cpu.system / a.stats!.os.processors * 100 : 0;
-      const b_load = b.stats!.cpu ? b.stats!.cpu.system / b.stats!.os.processors * 100 : 0;
+      const a_load = a.stats.cpu ? a.stats!.cpu.system / a.stats.os.processors * 100 : 0;
+      const b_load = b.stats.cpu ? b.stats!.cpu.system / b.stats.os.processors * 100 : 0;
       return a_load - b_load;
     });
   }
@@ -34,7 +34,7 @@ export class NodeStore extends Collection<string, Node> {
    * Creates a node.
    * @param options
    */
-  public create(options: NodeOptions) {
+  public create(options: NodeOptions): Node {
     const node = new Node(this.manager, options);
     this.set(node.name, node);
     return node;
@@ -54,7 +54,7 @@ export class NodeStore extends Collection<string, Node> {
    * @param node
    * @param reason
    */
-  public async remove(node: Node, reason: string) {
+  public async remove(node: Node, reason: string): Promise<void> {
     if (node.state === NodeStatus.DISCONNECTED) return;
     try {
       this.delete(node.name);

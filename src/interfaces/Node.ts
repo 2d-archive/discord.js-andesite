@@ -20,7 +20,7 @@ interface Version {
   interim: number;
   update: number;
   patch: number;
-  pre?: any;
+  pre: string | null;
   build: number;
   optional: string;
 }

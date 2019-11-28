@@ -7,7 +7,7 @@ export class PlayerStore extends Collection<string, Player> {
     super();
   };
 
-  static get [Symbol.species]() {
+  static get [Symbol.species](): typeof Map {
     return <any>Collection;
   }
 
@@ -21,7 +21,7 @@ export class PlayerStore extends Collection<string, Player> {
     return player;
   }
 
-  public delete(guild: string) {
+  public delete(guild: string): boolean {
     const player = this.get(guild);
     if (!player) return false;
     player.removeAllListeners();
@@ -34,7 +34,7 @@ export class PlayerStore extends Collection<string, Player> {
    * @param player
    * @param node
    */
-  public async move(player: Player, node: Node) {
+  public async move(player: Player, node: Node): Promise<void> {
     await player.destroy();
 
     this.delete(player.guildId);

@@ -98,15 +98,17 @@ export class Manager extends EventEmitter {
 
     if (!options.nodes) throw new Error("Provide an array of nodes.");
 
-    this.defaultVolume = options.defaultVolume || 50;
-    this.restTimeout = options.restTimeout || 10000;
-    this.reconnectTries = options.reconnectTries || 3;
-    this.player = options.player || Player;
+    const def = <T>(v: T | undefined, def: T): T => v === undefined ? def : v;
+    this.defaultVolume = def(options.defaultVolume, 100);
+    this.restTimeout = def(options.restTimeout, 10000);
+    this.reconnectTries = def(options.reconnectTries, 3);
+    this.player = def(options.player, Player);
 
     client.on("raw", (pk: Packet) => {
       if (["VOICE_STATE_UPDATE", "VOICE_SERVER_UPDATE"].includes(pk.t)) {
         if (pk.t === "VOICE_STATE_UPDATE" && pk.d.user_id !== this.userId) return;
-        if (this.players.has(pk.d.guild_id)) this.players.get(pk.d.guild_id)!["_voiceUpdate"](pk);
+        const player = this.players.get(pk.d.guild_id);
+        if (player) player._voiceUpdate(pk);
       }
     });
   }
@@ -154,7 +156,7 @@ export class Manager extends EventEmitter {
    * Initializes this manager, and connects all the nodes.
    * @param userId The user id of the bot.
    */
-  public init(userId: string) {
+  public init(userId: string): void {
     if (!userId) throw new Error("you must provide a user id.");
     this.userId = userId;
     return this.nodes.createMany(...this.options.nodes);

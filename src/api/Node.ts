@@ -23,7 +23,7 @@ export class Node extends EventEmitter {
   /**
    * The (andesite) node stats.
    */
-  public stats?: NodeStats;
+  public stats!: NodeStats;
   /**
    * The state of this node.
    */
@@ -49,8 +49,8 @@ export class Node extends EventEmitter {
    */
   public readonly players: PlayerStore = new PlayerStore(this);
 
-  private ws?: WebSocket | null;
-  private tries: number = 0;
+  private ws!: WebSocket;
+  private tries = 0;
   private readonly auth!: string;
   private readonly url!: string;
 
@@ -82,8 +82,8 @@ export class Node extends EventEmitter {
   /**
    * Sends a payload with the "get-stats" op.
    */
-  public getStats() {
-    if (!this.connected) return;
+  public getStats(): Promise<boolean> {
+    if (!this.connected) return Promise.resolve(false);
     return this._send("get-stats");
   }
 
@@ -93,7 +93,7 @@ export class Node extends EventEmitter {
    * @param payload
    * @private
    */
-  public async _send(op: string, payload?: { [key: string]: any }) {
+  public async _send(op: string, payload?: { [key: string]: any }): Promise<boolean> {
     return new Promise((res, rej) => {
       if (!this.connected) throw new Error("this node isn't connected");
       let data;
@@ -104,7 +104,7 @@ export class Node extends EventEmitter {
         return rej(false);
       }
 
-      this.ws!.send(data, e => e ? rej(e) : res(true));
+      this.ws.send(data, e => e ? rej(e) : res(true));
     });
   }
 
@@ -120,8 +120,8 @@ export class Node extends EventEmitter {
     guild.shard.send({
       op: 4,
       d: {
-        guild_id: data.guildId,
         channel_id: data.channelId,
+        guild_id: data.guildId,
         self_mute: selfmute,
         self_deaf: selfdeaf
       }
@@ -143,8 +143,8 @@ export class Node extends EventEmitter {
     guild.shard.send({
       op: 4,
       d: {
-        guild_id: guildId,
         channel_id: null,
+        guild_id: guildId,
         self_mute: null,
         self_deaf: null
       }
@@ -157,10 +157,10 @@ export class Node extends EventEmitter {
    * Connects to the node with a websocket..
    * @private
    */
-  private _connect() {
+  private _connect(): void {
     this.state = NodeStatus.CONNECTING;
     const headers: { [key: string]: string } = {};
-    if (this.connected) this.ws!.close();
+    if (this.connected) this.ws.close();
     if (this.id) headers["Andesite-Resume-Id"] = String(this.id);
     if (this.auth) headers["Authorization"] = this.auth;
 
@@ -171,10 +171,11 @@ export class Node extends EventEmitter {
       }
     });
 
-    this.ws!.on("error", this._error.bind(this));
-    this.ws!.on("message", this._message.bind(this));
-    this.ws!.on("open", () => this.manager.emit("open", this.name));
-    this.ws!.on("close", this._close.bind(this));
+    this.getStats();
+    this.ws.on("error", this._error.bind(this));
+    this.ws.on("message", this._message.bind(this));
+    this.ws.on("open", () => this.manager.emit("open", this.name));
+    this.ws.on("close", this._close.bind(this));
   }
 
   /**
@@ -182,7 +183,7 @@ export class Node extends EventEmitter {
    * @param data
    * @private
    */
-  private _message(data: string) {
+  private _message(data: string): void {
     const d = JSON.parse(data);
 
     switch (d.op) {
@@ -210,9 +211,9 @@ export class Node extends EventEmitter {
    * @param error
    * @private
    */
-  private _error(error: any) {
+  private _error(error: any): void {
     this.manager.emit("error", this.name, error);
-    this.ws!.close(4011, "reconnecting");
+    this.ws.close(4011, "reconnecting");
   }
 
   /**
@@ -221,10 +222,10 @@ export class Node extends EventEmitter {
    * @param reason
    * @private
    */
-  private async _close(code: number, reason: string) {
+  private async _close(code: number, reason: string): Promise<void> {
     this.state = NodeStatus.DISCONNECTED;
-    this.ws!.removeAllListeners();
-    this.ws = null;
+    this.ws.removeAllListeners();
+    delete this.ws;
     this.manager.emit("close", this.name, reason);
     try {
       if (this.tries < this.manager.reconnectTries) {

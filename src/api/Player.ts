@@ -41,7 +41,7 @@ export class Player extends EventEmitter {
   /**
    * Whether the player is paused or not.
    */
-  public paused: boolean = false;
+  public paused = false;
   /**
    * The current volume.
    */
@@ -53,7 +53,7 @@ export class Player extends EventEmitter {
   /**
    * Whether the player is playing a track or not.
    */
-  public playing: boolean = false;
+  public playing = false;
   /**
    * Timestamp of which the player started playing a track.
    */
@@ -99,7 +99,7 @@ export class Player extends EventEmitter {
    * @param options Options used when playing the track.
    * @memberof Player
    */
-  public play(track: string, options?: PlayOptions) {
+  public play(track: string, options?: PlayOptions): Promise<boolean> {
     this.playing = true;
     this.timestamp = Date.now();
     this.track = track;
@@ -234,7 +234,7 @@ export class Player extends EventEmitter {
    * @private
    * @memberof Player
    */
-  async _moved() {
+  public async _moved(): Promise<boolean | void> {
     try {
       if (!this.track) return this.emit("error", "no track found upon moving to another node.");
 
@@ -243,7 +243,7 @@ export class Player extends EventEmitter {
       if (this.volume !== 100) await this.setVolume(this.volume);
       this.emit("moved", this.guildId, this.node.name);
     } catch (e) {
-
+      return this.emit("error", e);
     }
   }
 
@@ -253,7 +253,7 @@ export class Player extends EventEmitter {
    * @private
    * @memberof Player
    */
-  async _voiceUpdate(pk: Packet) {
+  public async _voiceUpdate(pk: Packet) {
     switch (pk.t) {
       case "VOICE_STATE_UPDATE":
         this.voiceState = pk.d;
@@ -262,8 +262,8 @@ export class Player extends EventEmitter {
         this.voiceServer = pk.d;
         await this.node._send("voice-server-update", {
           guildId: this.guildId,
-          sessionId: this.voiceState!.session_id,
-          event: this.voiceServer
+          event: this.voiceServer,
+          sessionId: this.voiceState!.session_id
         });
         break;
     }
