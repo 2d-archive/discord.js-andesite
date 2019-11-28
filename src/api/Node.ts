@@ -222,7 +222,7 @@ export class Node extends EventEmitter {
    * @param reason
    * @private
    */
-  private async _close(code: number, reason: string) {
+  private _close(code: number, reason: string): void {
     this.ws.removeAllListeners();
     this.ws = null;
     this.reconnect(code, reason);

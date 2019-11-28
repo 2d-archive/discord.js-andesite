@@ -90,7 +90,7 @@ node.leave(message.guild.id);
 
 ## Example
 
-https://github.com/lolwatedjs/erika-costell
+<https://github.com/lolwastedjs/erika-costell>
 
 The example shows most of the features that this client and andesite supports.
 - filters (timescale, equalizer)
