@@ -59,7 +59,7 @@ export class NodeStore extends Collection<string, Node> {
     try {
       this.delete(node.name);
 
-      for (const player of node.players.values()) await node.players.move(player, this.get() || this.random());
+      for (const player of node.players.values()) node.players.move(player, this.get() || this.random());
       node.removeAllListeners();
 
       if (node["ws"]) {
@@ -68,6 +68,7 @@ export class NodeStore extends Collection<string, Node> {
       }
 
       this.manager.emit("disconnected", node.name, reason);
+      node.state = NodeStatus.DISCONNECTED;
     } catch (e) {
       this.manager.emit("error", node.name, e);
     }

@@ -192,7 +192,7 @@ export class Player extends EventEmitter {
    * @private
    * @memberof Player
    */
-  public async _update(pk: { [key: string]: any }) {
+  public async _update(pk: { [key: string]: any }): Promise<void> {
     switch (pk.op) {
       case "player-update":
         this._player = pk.state;

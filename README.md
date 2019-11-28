@@ -88,7 +88,9 @@ if (!node) throw new Error("No available nodes.");
 node.leave(message.guild.id);
 ```
 
-## [Example](https://github.com/lolwastedjs/discord.js-andesite/blob/master/test/index.js) 
+## Example
+
+https://github.com/lolwatedjs/erika-costell
 
 The example shows most of the features that this client and andesite supports.
 - filters (timescale, equalizer)

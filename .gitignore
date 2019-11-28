@@ -27,7 +27,7 @@ coverage/
 *.iml
 
 # Transpiled files
-# dist/
+#build/
 
 # Optional npm cache directory
 .npm
@@ -42,3 +42,4 @@ coverage/
 package-lock.json
 example/config.json
 yarn.lock
+/test/

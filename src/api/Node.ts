@@ -50,7 +50,7 @@ export class Node extends EventEmitter {
   public readonly players: PlayerStore = new PlayerStore(this);
 
   private ws!: WebSocket;
-  private tries = 0;
+  private tries: number = 0;
   private readonly auth!: string;
   private readonly url!: string;
 
@@ -174,7 +174,7 @@ export class Node extends EventEmitter {
     this.getStats();
     this.ws.on("error", this._error.bind(this));
     this.ws.on("message", this._message.bind(this));
-    this.ws.on("open", () => this.manager.emit("open", this.name));
+    this.ws.on("open", () => this.manager.emit("open", this.name, this.id));
     this.ws.on("close", this._close.bind(this));
   }
 
@@ -222,20 +222,29 @@ export class Node extends EventEmitter {
    * @param reason
    * @private
    */
-  private async _close(code: number, reason: string): Promise<void> {
-    this.state = NodeStatus.DISCONNECTED;
+  private async _close(code: number, reason: string) {
     this.ws.removeAllListeners();
-    delete this.ws;
+    this.ws = null;
+    this.reconnect(code, reason);
+  }
+
+  /**
+   * Handles a node reconnect.
+   * @param code
+   * @param reason
+   */
+  private reconnect(code: number, reason: string): void {
     this.manager.emit("close", this.name, reason, code);
-    try {
-      if (this.tries < this.manager.reconnectTries) {
-        this.tries++;
-        await this._connect();
-      } else {
-        await this.manager.nodes.remove(this, `Node couldn't reconnect in ${this.tries} tries.`);
+    if (this.tries < this.manager.reconnectTries) {
+      this.tries++;
+      try {
+        this._connect();
+      } catch (e) {
+        this.manager.emit('error', this.name, e);
+        setInterval(() => this.reconnect(code, reason), 2500);
       }
-    } catch (e) {
-      this.manager.emit('error', this.name, e);
+    } else {
+      this.manager.nodes.remove(this, `Node couldn't reconnect in ${this.tries} tries.`);
     }
   }
 }
