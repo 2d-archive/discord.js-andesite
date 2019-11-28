@@ -5,7 +5,7 @@ set -e
 
 if [ "$TRAVIS_BRANCH" != "master" -o -n "$TRAVIS_TAG" -o "$TRAVIS_PULL_REQUEST" != "false" ]; then
   echo -e "Not building for a non master branch push - building without deploying."
-  npm run docs
+  npm run build:docs
   exit 0
 fi
 
