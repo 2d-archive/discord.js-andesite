@@ -1,6 +1,6 @@
 {
   "name": "discord.js-andesite",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "A reliable, feature rich and stable andesite client for discord.js master.",
   "dependencies": {
     "axios": "^0.19.0",
