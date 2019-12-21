@@ -14,6 +14,7 @@ export class NodeStore extends Collection<string, Node> {
 
   /**
    * A collection of ideal nodes.
+   * @returns {Collection<string, Node>}
    */
   public get ideal(): Collection<string, Node> {
     const available = this.filter(node => node.connected);
@@ -26,7 +27,8 @@ export class NodeStore extends Collection<string, Node> {
 
   /**
    * Creates a node.
-   * @param options
+   * @param {NodeOptions} options - Data used when connecting to the andesite node.
+   * @returns {Node} The created node.
    */
   public create(options: NodeOptions): Node {
     const node = new Node(this.manager, options);
@@ -36,7 +38,8 @@ export class NodeStore extends Collection<string, Node> {
 
   /**
    * Creates many nodes.
-   * @param data
+   * @param {...NodeOptions} data
+   * @returns {void}
    */
   public createMany(...data: NodeOptions[]): void {
     for (const node of data)
@@ -45,8 +48,9 @@ export class NodeStore extends Collection<string, Node> {
 
   /**
    * Removes a node, and moves all the existing players assigned to it.
-   * @param node
-   * @param reason
+   * @param {Node} node - The node to remove.
+   * @param {string} reason - The reason for removing said node.
+   * @returns {Promise<void>}
    */
   public async remove(node: Node, reason: string): Promise<void> {
     if (node.state === NodeStatus.DISCONNECTED) return;

@@ -13,7 +13,8 @@ export class PlayerStore extends Collection<string, Player> {
 
   /**
    * Creates a player.
-   * @param options The guild and channel ID.
+   * @param {PlayerOptions} options - The guild and channel ID.
+   * @returns {Player} a new player.
    */
   public create(options: PlayerOptions): Player {
     const player = new (this.node.manager.player)(this.node, options);
@@ -21,6 +22,11 @@ export class PlayerStore extends Collection<string, Player> {
     return player;
   }
 
+  /**
+   * Destroys and deletes the player from this store.
+   * @param {string} guild - The players guildId
+   * @returns {boolean} Whether or not the deletion was successful
+   */
   public delete(guild: string): boolean {
     const player = this.get(guild);
     if (!player) return false;
@@ -31,8 +37,9 @@ export class PlayerStore extends Collection<string, Player> {
 
   /**
    * Moves a player from one node to another.
-   * @param player
-   * @param node
+   * @param {Player} player - The player to move.
+   * @param {Node} node - The node to move said player to.
+   * @returns {Promise<void>}
    */
   public async move(player: Player, node: Node): Promise<void> {
     await player.destroy();

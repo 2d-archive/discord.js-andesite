@@ -136,8 +136,10 @@ export class Manager extends EventEmitter {
 
   /**
    * Uses the /loadtracks endpoint, returns the response.
-   * @param query The query for the identifier query parameter.
-   * @param node This uses the rest property of a node.
+   * @param {string} query - The query for the identifier query parameter.
+   * @param {Node} node - Used for balancing requests throughout the nodes.
+   * Defaults to an ideal node.
+   * @returns {Promise<LoadedTracks>} the /loadtracks result.
    */
   public search(query: string, node?: Node): Promise<LoadedTracks> {
     if (!node && !this.nodes.get()) throw new Error(`No node available.`);
@@ -150,8 +152,10 @@ export class Manager extends EventEmitter {
 
   /**
    * Uses the /decodetracks endpoint, returns an array of track info
-   * @param tracks An array of Base64 tracks.
-   * @param node
+   * @param {string | string[]} tracks - An array of Base64 tracks or just a singular Base64 track.
+   * @param {Node} node - Used for balancing requests throughout the nodes.
+   * Defaults to an ideal node.
+   * @returns {Promise<TrackInfo[]>} the decoded tracks.
    */
   public decode(tracks: string | string[], node: Node = this.nodes.get()): Promise<TrackInfo[]> {
     return new Promise((res, rej) => {
@@ -164,7 +168,7 @@ export class Manager extends EventEmitter {
 
   /**
    * Initializes this manager, and connects all the nodes.
-   * @param userId The user id of the bot.
+   * @param {string} userId - The user id of the bot.
    */
   public init(userId: string): void {
     if (!userId) throw new Error("you must provide a user id.");
@@ -177,9 +181,9 @@ export class Manager extends EventEmitter {
    * @param packet
    * @private
    */
-  public _send(packet: { [key: string]: any }) {
+  public _send(packet: { [key: string]: any }): void {
     const guild = this.client.guilds.get(packet.d.guild_id);
-    if (!guild) return false;
-    return this.client.ws.shards ? guild.shard.send(packet) : (<any>this.client).ws.send(packet);
+    if (!guild) return;
+    this.client.ws.shards ? guild.shard.send(packet) : (<any>this.client).ws.send(packet);
   }
 }

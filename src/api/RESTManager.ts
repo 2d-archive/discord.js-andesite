@@ -2,6 +2,10 @@ import axios, {AxiosInstance, AxiosRequestConfig, AxiosResponse} from "axios";
 import {Node} from "./Node";
 import {EventEmitter} from "events";
 
+/**
+ * Handles REST requests to an andesite node.
+ * @extends {EventEmitter}
+ */
 export class RESTManager extends EventEmitter {
   public readonly url: string;
   public axios: AxiosInstance;
@@ -23,8 +27,8 @@ export class RESTManager extends EventEmitter {
 
   /**
    * Makes a get request to the node.
-   * @param endpoint The endpoint to make a request to.
-   * @param config
+   * @param {string} endpoint - The endpoint to make a request to.
+   * @param {AxiosRequestConfig} [config] - Config to use for the request.
    */
   public get(endpoint: string, config?: AxiosRequestConfig): Promise<any> {
     return new Promise((resolve, reject) => {
@@ -39,9 +43,9 @@ export class RESTManager extends EventEmitter {
 
   /**
    * Makes a POST request to the node
-   * @param endpoint The endpoint to make a request to.
-   * @param data The data to post.
-   * @param config
+   * @param {string} endpoint - The endpoint to make a request to.
+   * @param {*} data - The data to post.
+   * @param {AxiosRequestConfig} [config] - Config to use for the request.
    */
   public post(endpoint: string, data?: any, config?: AxiosRequestConfig): Promise<any> {
     return new Promise((resolve, reject) => {
@@ -56,9 +60,9 @@ export class RESTManager extends EventEmitter {
 
   /**
    * Makes a PATCH request to the node.
-   * @param endpoint The endpoint to make a request to.
-   * @param data The data to patch.
-   * @param config
+   * @param {string} endpoint - The endpoint to make a request to.
+   * @param {any} data - The data to patch.
+   * @param {AxiosRequestConfig} [config] - Config to use for the request.
    */
   public patch(endpoint: string, data?: any, config?: AxiosRequestConfig): Promise<any> {
     return new Promise((resolve, reject) => {
@@ -73,8 +77,8 @@ export class RESTManager extends EventEmitter {
 
   /**
    * Makes a DELETE request to the node.
-   * @param endpoint The endpoint to make a request to.
-   * @param config
+   * @param {string} endpoint - The endpoint to make a request to.
+   * @param {AxiosRequestConfig} [config] - Config to use for the request.
    * @private
    */
   public delete(endpoint: string, config?: AxiosRequestConfig): Promise<any> {

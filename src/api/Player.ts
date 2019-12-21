@@ -66,7 +66,7 @@ export class Player extends EventEmitter {
   /**
    * The endpoint used in "/player/:guild_id" requests.
    */
-  readonly _endpoint: string;
+  public readonly _endpoint: string;
   /**
    * The andesite player object. Direct access to the andesite player.
    */
@@ -95,11 +95,11 @@ export class Player extends EventEmitter {
 
   /**
    * Plays a base64 track from lavaplayer.
-   * @param track The base64 track.
-   * @param options Options used when playing the track.
+   * @param {string} track - The base64 track.
+   * @param {PlayOptions} [options={}] - Options used when playing the track.
    * @memberof Player
    */
-  public play(track: string, options?: PlayOptions): Promise<boolean> {
+  public play(track: string, options: PlayOptions = {}): Promise<boolean> {
     this.playing = true;
     this.timestamp = Date.now();
     this.track = track;
@@ -135,7 +135,7 @@ export class Player extends EventEmitter {
 
   /**
    * Change the current volume.
-   * @param value The value to use.
+   * @param value - The value to use.
    * @memberof Player
    */
   public setVolume(value: number): Promise<AndesitePlayer> {
@@ -146,7 +146,7 @@ export class Player extends EventEmitter {
 
   /**
    * Seek to a position in the current playing track.
-   * @param position
+   * @param position - The position to seek to.
    * @memberof Player
    */
   public seek(position: number): Promise<AndesitePlayer> {
@@ -157,8 +157,9 @@ export class Player extends EventEmitter {
 
   /**
    * Manage a filter.
-   * @param filter The filter name to manage
-   * @param options Options for the filter, you can omit this.
+   * @template F 
+   * @param {F} filter - The filter name to manage
+   * @param {FilterMap[F]} options - Options for the filter, you can omit this.
    * @memberof Player
    */
   public filter<F extends FilterNames>(filter: F, options?: FilterMap[F]): Promise<AndesitePlayer> {

@@ -72,7 +72,7 @@ export class Node {
    * Penalties of this node. The higher the return number, the more loaded the server is.
    * (From shoukaku... thanks!)
    */
-  get penalties() {
+  get penalties(): number {
     let penalties = 0;
     penalties += this.stats.players.playing;
     penalties += Math.round(Math.pow(1.05, 100 * this.stats.cpu.system) * 10 - 10);
@@ -121,8 +121,8 @@ export class Node {
 
   /**
    * Creates a player and a voice connection.
-   * @param data The guild & voice channel id for the player.
-   * @param options The options used for creating the player.
+   * @param {PlayerOptions} data - The guild & voice channel id for the player.
+   * @param {JoinOptions} [options={}] - The options used for creating the player.
    */
   public join(data: PlayerOptions, {selfmute = false, selfdeaf = false}: JoinOptions = {}): Player {
     const guild = this.manager.client.guilds.get(data.guildId);
@@ -145,7 +145,7 @@ export class Node {
 
   /**
    * Destroys the player and voice connection.
-   * @param guildId
+   * @param guildId - The guild to leave.
    */
   public leave(guildId: string): boolean {
     const guild = this.manager.client.guilds.get(guildId);
