@@ -3,8 +3,8 @@
  * All Rights Reserved.
  */
 
-const {Manager} = require("../build");
-const {Client, MessageEmbed} = require("discord.js");
+const { Manager } = require("../build");
+const { Client, MessageEmbed } = require("discord.js");
 
 const queues = {};
 const client = new Client();
@@ -33,16 +33,16 @@ client.on("message", async (message) => {
   const [cmd, ...args] = message.content.slice(2).trim().split(/ +/g);
 
   switch (cmd.toLowerCase()) {
-	  case "move": {
-		  const node = manager.nodes.get();
-		  if (!node) return message.channel.send(s("Sorry, there is no node available."));
+    case "move": {
+      const node = manager.nodes.get();
+      if (!node) return message.channel.send(s("Sorry, there is no node available."));
 
-		  const player = node.players.get(message.guild.id);
-		  if (!player) return message.channel.send(s(`Use \`!>play <song name or url>\` to start a queue`));
+      const player = node.players.get(message.guild.id);
+      if (!player) return message.channel.send(s(`Use \`!>play <song name or url>\` to start a queue`));
 
-		  await player.moveVoiceChannel(args[0]);
-		  break;
-	  }
+      await player.moveVoiceChannel(args[0]);
+      break;
+    }
 
     case "play": {
       const node = manager.nodes.get();
@@ -54,7 +54,7 @@ client.on("message", async (message) => {
           return message.channel.send(s(`Please join the voice channel i'm in`));
       } else {
         queues[message.guild.id] = [];
-        player = node.join({guildId: message.guild.id, channelId: message.member.voice.channelID});
+        player = node.join({ guildId: message.guild.id, channelId: message.member.voice.channelID });
       }
 
       const results = await manager.search(args.join(" "), node);
@@ -100,14 +100,14 @@ client.on("message", async (message) => {
       return message.channel.send(s(`${args[0] === "disable" ? "Disabled" : "Enabled"} the nightcore mode!\n*takes a few seconds to take affect*`));
     }
     case "nowplaying": {
-	    const node = manager.nodes.get();
-	    if (!node) return message.channel.send(s("Sorry, there is no node available."));
+      const node = manager.nodes.get();
+      if (!node) return message.channel.send(s("Sorry, there is no node available."));
 
-	    const player = node.players.get(message.guild.id);
-	    if (!player) return message.channel.send(s(`Use \`!>play <song name or url>\` to start a queue`));
+      const player = node.players.get(message.guild.id);
+      if (!player) return message.channel.send(s(`Use \`!>play <song name or url>\` to start a queue`));
 
-	    const current = await node.rest.get(`/decodetrack?track=${player.track}`);
-	    return message.channel.send(s(require('./util').playerEmbed(player, current)));
+      const current = await node.rest.get(`/decodetrack?track=${player.track}`);
+      return message.channel.send(s(require('./util').playerEmbed(player, current)));
     }
     case "bassboost": {
       const node = manager.nodes.get();
@@ -124,7 +124,7 @@ client.on("message", async (message) => {
       }, i = 0;
 
       await player.filter("equalizer", {
-        bands: Array(3).fill(null).map(() => ({band: i++, gain: levels[args[0]]}))
+        bands: Array(3).fill(null).map(() => ({ band: i++, gain: levels[args[0]] }))
       });
       return message.channel.send(s(`Set the bassboost to **${args[0]}**\n*takes a few seconds to take affect*`));
     }
@@ -168,10 +168,10 @@ client.on("message", async (message) => {
       if (!player) return message.channel.send(s(`Use \`!>play <song name or url>\` to start a queue`));
 
       queues[message.guild.id] = [];
-	    await player.stop();
+      await player.stop();
       return message.channel.send(s(`Stopped the player, use \`i>play <song name or url>\` to play a song`));
     }
   }
 });
 
-client.login("NTY4MjY1NDU2NDk5Mjk0MjE4.XeFzhg.HZ1C7rtmw3QeDD2e9Q3kLgFoKUs")
+client.login()

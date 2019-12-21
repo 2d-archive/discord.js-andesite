@@ -106,7 +106,6 @@ export class Manager extends EventEmitter {
 
     client.on("raw", async (pk: Packet) => {
       if (!["VOICE_STATE_UPDATE", "VOICE_SERVER_UPDATE"].includes(pk.t)) return;
-      if (pk.d.user_id !== this.client.user.id) return;
 
       const player: any = this.players.get(pk.d.guild_id);
       if (!player) return;
@@ -117,6 +116,7 @@ export class Manager extends EventEmitter {
           await player._voiceUpdate();
           break;
         case "VOICE_STATE_UPDATE":
+          if (pk.d.user_id !== this.client.user.id) return;
           player.voiceState = pk.d;
           break;
       }
@@ -184,6 +184,6 @@ export class Manager extends EventEmitter {
   public _send(packet: { [key: string]: any }): void {
     const guild = this.client.guilds.get(packet.d.guild_id);
     if (!guild) return;
-    this.client.ws.shards ? guild.shard.send(packet) : (<any>this.client).ws.send(packet);
+    this.client.ws.shards ? guild.shard.send(packet) : (this.client.ws as any).send(packet);
   }
 }

@@ -79,7 +79,6 @@ export class RESTManager extends EventEmitter {
    * Makes a DELETE request to the node.
    * @param {string} endpoint - The endpoint to make a request to.
    * @param {AxiosRequestConfig} [config] - Config to use for the request.
-   * @private
    */
   public delete(endpoint: string, config?: AxiosRequestConfig): Promise<any> {
     return new Promise((resolve, reject) => {

@@ -146,7 +146,7 @@ export class Player extends EventEmitter {
 
   /**
    * Seek to a position in the current playing track.
-   * @param position - The position to seek to.
+   * @param {number} position - The position to seek to.
    * @memberof Player
    */
   public seek(position: number): Promise<AndesitePlayer> {
@@ -157,9 +157,8 @@ export class Player extends EventEmitter {
 
   /**
    * Manage a filter.
-   * @template F 
-   * @param {F} filter - The filter name to manage
-   * @param {FilterMap[F]} options - Options for the filter, you can omit this.
+   * @param {FilterNames} filter - The filter name to manage
+   * @param {object} options - Options for the filter, you can omit this.
    * @memberof Player
    */
   public filter<F extends FilterNames>(filter: F, options?: FilterMap[F]): Promise<AndesitePlayer> {
@@ -250,8 +249,8 @@ export class Player extends EventEmitter {
 
   /**
    * Moves the player to another voice channel
-   * @param channelId The voice channel id to move to.
-   * @param reset Whether to reset the player. (not recommended)
+   * @param {string} channelId - The voice channel id to move to.
+   * @param {boolean} [reset=false] - Whether to reset the player. (not recommended)
    */
   public async moveVoiceChannel(channelId: string, reset: boolean = false): Promise<boolean> {
     if (this.channelId === channelId) return Promise.reject(false);
@@ -270,11 +269,10 @@ export class Player extends EventEmitter {
 
   /**
    * Update the voice server & voice state.
-   * @param pk
    * @private
    * @memberof Player
    */
-  public async _voiceUpdate(pk?: Packet): Promise<void> {
+  public async _voiceUpdate(): Promise<void> {
     await this.node._send("voice-server-update", {
       guildId: this.guildId,
       event: this.voiceServer,

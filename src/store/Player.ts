@@ -48,7 +48,7 @@ export class PlayerStore extends Collection<string, Player> {
     player.node = node;
     player.rest = node.rest;
 
-    await player["_voiceUpdate"]();
+    await player._voiceUpdate();
     await player._moved();
     node.players.set(player.guildId, player);
   }
