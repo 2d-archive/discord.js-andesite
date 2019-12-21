@@ -64,7 +64,6 @@ export interface Karaoke {
   level?: number;
   monoLevel?: number;
   filterBand?: number;
-  filterWidth?: number;
 }
 
 export interface Timescale {

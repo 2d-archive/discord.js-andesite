@@ -8,6 +8,6 @@
     "out": "docs",
     "hideGenerator": true,
     "ignoreCompilerErrors": true,
-    "readme": "README.md",
+    "readme": "README.md"
   }
 }

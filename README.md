@@ -2,6 +2,7 @@
 [![npm](https://img.shields.io/npm/dt/discord.js-andesite?color=red&label=Total%20Downloads&logo=npm&style=flat-square)](https://npmjs.com/discord.js-andesite)
 [![dependencies Status](https://david-dm.org/lolwastedjs/discord.js-andesite/status.svg)](https://david-dm.org/lolwastedjs/discord.js-andesite)
 [![devDependencies Status](https://david-dm.org/lolwastedjs/discord.js-andesite/dev-status.svg)](https://david-dm.org/lolwastedjs/discord.js-andesite?type=dev)
+[![Build Status](https://travis-ci.com/LolWastedJS/discord.js-andesite.svg?branch=master)](https://travis-ci.com/LolWastedJS/discord.js-andesite)
 
 # discord.js-andesite
 

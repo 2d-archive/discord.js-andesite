@@ -1,4 +1,3 @@
-import {EventEmitter} from "events";
 import {Manager} from "../Manager";
 import {RESTManager} from "./RESTManager";
 import WebSocket from "ws";
@@ -11,7 +10,7 @@ export interface JoinOptions {
   selfdeaf?: boolean
 }
 
-export class Node extends EventEmitter {
+export class Node {
   /**
    * The connection id from the node.
    */
@@ -49,7 +48,7 @@ export class Node extends EventEmitter {
    */
   public readonly players: PlayerStore = new PlayerStore(this);
 
-  private ws!: WebSocket;
+  private ws?: WebSocket;
   private tries: number = 0;
   private readonly auth!: string;
   private readonly url!: string;
@@ -58,17 +57,29 @@ export class Node extends EventEmitter {
     public readonly manager: Manager,
     options: NodeOptions
   ) {
-    super();
-
     this.name = options.name;
     this.host = options.host;
-    this.port = options.port;
+    this.port = String(options.port);
 
     Object.defineProperty(this, "rest", {value: new RESTManager(this)});
     Object.defineProperty(this, "auth", {value: options.auth});
     Object.defineProperty(this, "url", {value: `ws://${options.host}:${options.port}/websocket`});
 
     this._connect();
+  }
+
+  /**
+   * Penalties of this node. The higher the return number, the more loaded the server is.
+   * (From shoukaku... thanks!)
+   */
+  get penalties() {
+    let penalties = 0;
+    penalties += this.stats.players.playing;
+    penalties += Math.round(Math.pow(1.05, 100 * this.stats.cpu.system) * 10 - 10);
+    if (this.stats.frameStats) {
+      penalties += this.stats.frameStats.reduce((a, fs) => a + fs.loss, 0);
+    }
+    return penalties;
   }
 
   /**
@@ -93,7 +104,7 @@ export class Node extends EventEmitter {
    * @param payload
    * @private
    */
-  public async _send(op: string, payload?: { [key: string]: any }): Promise<boolean> {
+  public _send(op: string, payload?: { [key: string]: any }): Promise<boolean> {
     return new Promise((res, rej) => {
       if (!this.connected) throw new Error("this node isn't connected");
       let data;
@@ -117,7 +128,7 @@ export class Node extends EventEmitter {
     const guild = this.manager.client.guilds.get(data.guildId);
     if (!guild) throw new Error(`Guild with id of ${data.guildId} doesn't exist.`);
 
-    guild.shard.send({
+    this.manager._send({
       op: 4,
       d: {
         channel_id: data.channelId,
@@ -138,9 +149,9 @@ export class Node extends EventEmitter {
    */
   public leave(guildId: string): boolean {
     const guild = this.manager.client.guilds.get(guildId);
-    if (!guild) throw new Error(`Guild with id of ${guildId} doesn't exist.`);
+    if (!guild) throw new Error(`Guild with id of ${guildId} doesn't exist or the client hasn't acknowledged it yet.`);
 
-    guild.shard.send({
+    this.manager._send({
       op: 4,
       d: {
         channel_id: null,
@@ -157,7 +168,7 @@ export class Node extends EventEmitter {
    * Connects to the node with a websocket..
    * @private
    */
-  private _connect(): void {
+  private async _connect(): Promise<void> {
     this.state = NodeStatus.CONNECTING;
     const headers: { [key: string]: string } = {};
     if (this.connected) this.ws.close();
@@ -171,11 +182,11 @@ export class Node extends EventEmitter {
       }
     });
 
-    this.getStats();
     this.ws.on("error", this._error.bind(this));
     this.ws.on("message", this._message.bind(this));
     this.ws.on("open", () => this.manager.emit("open", this.name, this.id));
     this.ws.on("close", this._close.bind(this));
+    await this.getStats();
   }
 
   /**
@@ -183,7 +194,7 @@ export class Node extends EventEmitter {
    * @param data
    * @private
    */
-  private _message(data: string): void {
+  private async _message(data: string): Promise<void> {
     const d = JSON.parse(data);
 
     switch (d.op) {
@@ -198,8 +209,8 @@ export class Node extends EventEmitter {
         break;
       case "event":
       case "player-update":
-        // @ts-ignore
-        this.players.has(d.guildId) ? this.players.get(d.guildId)._update(d) : null;
+        if (this.players.has(d.guildId))
+          await this.players.get(d.guildId)._update(d);
         break;
       default:
         this.manager.emit("raw", this.name, d);
@@ -222,10 +233,10 @@ export class Node extends EventEmitter {
    * @param reason
    * @private
    */
-  private _close(code: number, reason: string): void {
+  private _close(code: number, reason: string): Promise<void> {
     this.ws.removeAllListeners();
     this.ws = null;
-    this.reconnect(code, reason);
+    return this.reconnect(code, reason);
   }
 
   /**
@@ -233,18 +244,18 @@ export class Node extends EventEmitter {
    * @param code
    * @param reason
    */
-  private reconnect(code: number, reason: string): void {
+  private async reconnect(code: number, reason: string): Promise<void> {
     this.manager.emit("close", this.name, reason, code);
     if (this.tries < this.manager.reconnectTries) {
       this.tries++;
       try {
-        this._connect();
+        await this._connect();
       } catch (e) {
         this.manager.emit('error', this.name, e);
         setInterval(() => this.reconnect(code, reason), 2500);
       }
     } else {
-      this.manager.nodes.remove(this, `Node couldn't reconnect in ${this.tries} tries.`);
+      await this.manager.nodes.remove(this, `Node couldn't reconnect in ${this.tries} tries.`);
     }
   }
 }

@@ -16,14 +16,8 @@ export class NodeStore extends Collection<string, Node> {
    * A collection of ideal nodes.
    */
   public get ideal(): Collection<string, Node> {
-    return this.filter(node => {
-      if (node.connected) node.getStats();
-      return node.connected;
-    }).sort((a, b) => {
-      const a_load = a.stats.cpu ? a.stats!.cpu.system / a.stats.os.processors * 100 : 0;
-      const b_load = b.stats.cpu ? b.stats!.cpu.system / b.stats.os.processors * 100 : 0;
-      return a_load - b_load;
-    });
+    const available = this.filter(node => node.connected);
+    return available.sort((a, b) => a.penalties - b.penalties);
   }
 
   public get(key?: string): Node {
@@ -60,7 +54,6 @@ export class NodeStore extends Collection<string, Node> {
       this.delete(node.name);
 
       for (const player of node.players.values()) node.players.move(player, this.get() || this.random());
-      node.removeAllListeners();
 
       if (node["ws"]) {
         node["ws"].removeAllListeners();

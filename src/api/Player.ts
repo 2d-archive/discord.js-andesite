@@ -64,13 +64,13 @@ export class Player extends EventEmitter {
    */
   public rest: RESTManager;
   /**
+   * The endpoint used in "/player/:guild_id" requests.
+   */
+  readonly _endpoint: string;
+  /**
    * The andesite player object. Direct access to the andesite player.
    */
   private _player?: AndesitePlayer;
-  /**
-   * The endpoint used in "/player/:guild_id" requests.
-   */
-  private readonly _endpoint: string;
   /**
    * The voice server that this player is using.
    */
@@ -234,17 +234,37 @@ export class Player extends EventEmitter {
    * @private
    * @memberof Player
    */
-  public async _moved(): Promise<boolean | void> {
+  public async _moved(node: boolean = true): Promise<boolean | void> {
     try {
       if (!this.track) return this.emit("error", "no track found upon moving to another node.");
 
       await this.play(this.track, {start: this._player!.position});
       if (this.filters.equalizer.bands.length) await this.filter("equalizer", {bands: this.filters.equalizer.bands});
       if (this.volume !== 100) await this.setVolume(this.volume);
-      this.emit("moved", this.guildId, this.node.name);
+      if (node) this.emit("moved", this.guildId, this.node.name);
     } catch (e) {
       return this.emit("error", e);
     }
+  }
+
+  /**
+   * Moves the player to another voice channel
+   * @param channelId The voice channel id to move to.
+   * @param reset Whether to reset the player. (not recommended)
+   */
+  public async moveVoiceChannel(channelId: string, reset: boolean = false): Promise<boolean> {
+    if (this.channelId === channelId) return Promise.reject(false);
+
+    // await this.destroy();
+
+    this.channelId = channelId;
+    this.node.join({ guildId: this.guildId, channelId }, {
+      selfdeaf: this.voiceState.self_deaf,
+      selfmute: this.voiceState.self_mute
+    });
+
+    if (!reset) await this._moved(false);
+    return Promise.resolve(true);
   }
 
   /**
@@ -253,19 +273,11 @@ export class Player extends EventEmitter {
    * @private
    * @memberof Player
    */
-  public async _voiceUpdate(pk: Packet): Promise<void> {
-    switch (pk.t) {
-      case "VOICE_STATE_UPDATE":
-        this.voiceState = pk.d;
-        break;
-      case "VOICE_SERVER_UPDATE":
-        this.voiceServer = pk.d;
-        await this.node._send("voice-server-update", {
-          guildId: this.guildId,
-          event: this.voiceServer,
-          sessionId: this.voiceState!.session_id
-        });
-        break;
-    }
+  public async _voiceUpdate(pk?: Packet): Promise<void> {
+    await this.node._send("voice-server-update", {
+      guildId: this.guildId,
+      event: this.voiceServer,
+      sessionId: this.voiceState!.session_id
+    });
   }
 }

@@ -161,7 +161,7 @@ export interface NodeOptions {
   /**
    * The port that the node is on.
    */
-  port: string;
+  port: number | string;
   /**
    * The authorization used for connecting. You can omit this if you didn't set a password.
    */

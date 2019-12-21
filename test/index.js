@@ -33,6 +33,17 @@ client.on("message", async (message) => {
   const [cmd, ...args] = message.content.slice(2).trim().split(/ +/g);
 
   switch (cmd.toLowerCase()) {
+	  case "move": {
+		  const node = manager.nodes.get();
+		  if (!node) return message.channel.send(s("Sorry, there is no node available."));
+
+		  const player = node.players.get(message.guild.id);
+		  if (!player) return message.channel.send(s(`Use \`!>play <song name or url>\` to start a queue`));
+
+		  await player.moveVoiceChannel(args[0]);
+		  break;
+	  }
+
     case "play": {
       const node = manager.nodes.get();
       if (!node) return message.channel.send(s("Sorry, there is no node available."));
@@ -162,3 +173,5 @@ client.on("message", async (message) => {
     }
   }
 });
+
+client.login("NTY4MjY1NDU2NDk5Mjk0MjE4.XeFzhg.HZ1C7rtmw3QeDD2e9Q3kLgFoKUs")

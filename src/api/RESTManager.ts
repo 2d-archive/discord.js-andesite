@@ -5,6 +5,10 @@ import {EventEmitter} from "events";
 export class RESTManager extends EventEmitter {
   public readonly url: string;
   public axios: AxiosInstance;
+  /**
+   * The amount of requests for session (node connection, goes back to 0 on reconnect).
+   */
+  public requests: number = 0;
   public constructor(node: Node) {
     super();
 
@@ -23,13 +27,13 @@ export class RESTManager extends EventEmitter {
    * @param config
    */
   public get(endpoint: string, config?: AxiosRequestConfig): Promise<any> {
-    return new Promise((reso, reje) => {
+    return new Promise((resolve, reject) => {
       return this.axios.get(endpoint, config)
       .then((res: AxiosResponse) => {
-        this.emit("GET", endpoint, config, res);
-        return reso(res.data);
+        this.requests++;
+        return resolve(res.data)
       })
-      .catch(reje);
+      .catch(reject);
     });
   }
 
@@ -40,13 +44,13 @@ export class RESTManager extends EventEmitter {
    * @param config
    */
   public post(endpoint: string, data?: any, config?: AxiosRequestConfig): Promise<any> {
-    return new Promise((reso, reje) => {
+    return new Promise((resolve, reject) => {
       return this.axios.post(endpoint, data, config)
       .then((res: AxiosResponse) => {
-        this.emit("POST", endpoint, config, res);
-        return reso(res.data);
+        this.requests++;
+        return resolve(res.data)
       })
-      .catch(reje);
+      .catch(reject);
     });
   }
 
@@ -57,13 +61,13 @@ export class RESTManager extends EventEmitter {
    * @param config
    */
   public patch(endpoint: string, data?: any, config?: AxiosRequestConfig): Promise<any> {
-    return new Promise((reso, reje) => {
+    return new Promise((resolve, reject) => {
       return this.axios.patch(endpoint, data, config)
       .then((res: AxiosResponse) => {
-        this.emit("PATCH", endpoint, config, res);
-        return reso(res.data);
+        this.requests++;
+        return resolve(res.data)
       })
-      .catch(reje);
+      .catch(reject);
     });
   }
 
@@ -74,13 +78,13 @@ export class RESTManager extends EventEmitter {
    * @private
    */
   public delete(endpoint: string, config?: AxiosRequestConfig): Promise<any> {
-    return new Promise((reso, reje) => {
+    return new Promise((resolve, reject) => {
       return this.axios.delete(endpoint, config)
       .then((res: AxiosResponse) => {
-        this.emit("DELETE", endpoint, config, res);
-        return reso(res.data);
+        this.requests++;
+        return resolve(res.data)
       })
-      .catch(reje);
+      .catch(reject);
     });
   }
 }

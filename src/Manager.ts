@@ -29,7 +29,7 @@ export interface ManagerOptions {
   /**
    * The player class to use.
    * @defaults Player*/
-  player: typeof Player;
+  player?: typeof Player;
 }
 
 export interface VoiceServerUpdate {
@@ -104,11 +104,21 @@ export class Manager extends EventEmitter {
     this.reconnectTries = def(options.reconnectTries, 3);
     this.player = def(options.player, Player);
 
-    client.on("raw", (pk: Packet) => {
-      if (["VOICE_STATE_UPDATE", "VOICE_SERVER_UPDATE"].includes(pk.t)) {
-        if (pk.t === "VOICE_STATE_UPDATE" && pk.d.user_id !== this.userId) return;
-        const player = this.players.get(pk.d.guild_id);
-        if (player) player._voiceUpdate(pk);
+    client.on("raw", async (pk: Packet) => {
+      if (!["VOICE_STATE_UPDATE", "VOICE_SERVER_UPDATE"].includes(pk.t)) return;
+      if (pk.d.user_id !== this.client.user.id) return;
+
+      const player: any = this.players.get(pk.d.guild_id);
+      if (!player) return;
+
+      switch(pk.t) {
+        case "VOICE_SERVER_UPDATE":
+          player.voiceServer = pk.d;
+          await player._voiceUpdate();
+          break;
+        case "VOICE_STATE_UPDATE":
+          player.voiceState = pk.d;
+          break;
       }
     });
   }
@@ -160,5 +170,16 @@ export class Manager extends EventEmitter {
     if (!userId) throw new Error("you must provide a user id.");
     this.userId = userId;
     return this.nodes.createMany(...this.options.nodes);
+  }
+
+  /**
+   * Sends a packet to discord.
+   * @param packet
+   * @private
+   */
+  public _send(packet: { [key: string]: any }) {
+    const guild = this.client.guilds.get(packet.d.guild_id);
+    if (!guild) return false;
+    return this.client.ws.shards ? guild.shard.send(packet) : (<any>this.client).ws.send(packet);
   }
 }
