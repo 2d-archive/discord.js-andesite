@@ -6,4 +6,7 @@
 .gitattributes
 /.idea/
 
-# WIP
+/scripts/
+.travis.yml
+tsconfig.json
+tslint.json

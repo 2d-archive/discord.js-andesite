@@ -124,7 +124,7 @@ export class Node {
    * @param {PlayerOptions} data - The guild & voice channel id for the player.
    * @param {JoinOptions} [options={}] - The options used for creating the player.
    */
-  public join<T extends Player>(data: PlayerOptions, { selfmute = false, selfdeaf = false }: JoinOptions = {}): T | Player {
+  public join<T = Player>(data: PlayerOptions, { selfmute = false, selfdeaf = false }: JoinOptions = {}): T {
     const guild = this.manager.client.guilds.get(data.guildId);
     if (!guild) throw new Error(`Guild with id of ${data.guildId} doesn't exist.`);
 
@@ -138,9 +138,9 @@ export class Node {
       }
     });
 
-    if (this.players.has(data.guildId)) return this.players.get(data.guildId)!;
+    if (this.players.has(data.guildId)) return <T> <unknown> this.players.get(data.guildId)!;
 
-    return this.players.create(data);
+    return <T> <unknown> this.players.create(data);
   }
 
   /**
