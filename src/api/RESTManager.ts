@@ -17,12 +17,15 @@ export class RESTManager extends EventEmitter {
     super();
 
     this.url = `http://${node.host}:${node.port}`;
+
     this.axios = axios.create({
       baseURL: this.url,
-      headers: {'User-Id': node.manager.userId},
-      timeout: node.manager.restTimeout || 10000
+      headers: { "User-Id": node.manager.userId },
+      timeout: node.manager.restTimeout || 20000
     });
-    if (node["auth"]) this.axios.defaults.headers["Authorization"] = node["auth"];
+
+    if (node["auth"] !== undefined) 
+      this.axios.defaults.headers.common.Authorization = node["auth"];
   }
 
   /**

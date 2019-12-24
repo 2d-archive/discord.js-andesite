@@ -1,6 +1,6 @@
-import {Collection} from "discord.js";
-import {Player, PlayerOptions} from "../api/Player";
-import {Node} from "../api/Node";
+import { Collection } from "discord.js";
+import { Player, PlayerOptions } from "../api/Player";
+import { Node } from "../api/Node";
 
 export class PlayerStore extends Collection<string, Player> {
   public constructor(public node: Node) {

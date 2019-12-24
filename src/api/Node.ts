@@ -1,9 +1,9 @@
-import {Manager} from "../Manager";
-import {RESTManager} from "./RESTManager";
+import { Manager } from "../Manager";
+import { RESTManager } from "./RESTManager";
 import WebSocket from "ws";
-import {NodeMetadata, NodeOptions, NodeStats, NodeStatus} from "../interfaces/Node";
-import {PlayerStore} from "../store/Player";
-import {Player, PlayerOptions} from "./Player";
+import { NodeMetadata, NodeOptions, NodeStats, NodeStatus } from "../interfaces/Node";
+import { PlayerStore } from "../store/Player";
+import { Player, PlayerOptions } from "./Player";
 
 export interface JoinOptions {
   selfmute?: boolean;
@@ -61,9 +61,9 @@ export class Node {
     this.host = options.host;
     this.port = String(options.port);
 
-    Object.defineProperty(this, "rest", {value: new RESTManager(this)});
-    Object.defineProperty(this, "auth", {value: options.auth});
-    Object.defineProperty(this, "url", {value: `ws://${options.host}:${options.port}/websocket`});
+    Object.defineProperty(this, "auth", { value: options.auth });
+    Object.defineProperty(this, "rest", { value: new RESTManager(this) });
+    Object.defineProperty(this, "url", { value: `ws://${options.host}:${options.port}/websocket` });
 
     this._connect();
   }
@@ -110,7 +110,7 @@ export class Node {
       let data;
 
       try {
-        data = JSON.stringify({op, ...payload});
+        data = JSON.stringify({ op, ...payload });
       } catch (e) {
         return rej(false);
       }
@@ -124,7 +124,7 @@ export class Node {
    * @param {PlayerOptions} data - The guild & voice channel id for the player.
    * @param {JoinOptions} [options={}] - The options used for creating the player.
    */
-  public join(data: PlayerOptions, {selfmute = false, selfdeaf = false}: JoinOptions = {}): Player {
+  public join<T extends Player>(data: PlayerOptions, { selfmute = false, selfdeaf = false }: JoinOptions = {}): T | Player {
     const guild = this.manager.client.guilds.get(data.guildId);
     if (!guild) throw new Error(`Guild with id of ${data.guildId} doesn't exist.`);
 
@@ -138,7 +138,7 @@ export class Node {
       }
     });
 
-    if (this.players.has(data.guildId)) return <Player>this.players.get(data.guildId);
+    if (this.players.has(data.guildId)) return this.players.get(data.guildId)!;
 
     return this.players.create(data);
   }
@@ -184,9 +184,8 @@ export class Node {
 
     this.ws.on("error", this._error.bind(this));
     this.ws.on("message", this._message.bind(this));
-    this.ws.on("open", () => this.manager.emit("open", this.name, this.id));
+    this.ws.on("open", this._open.bind(this));
     this.ws.on("close", this._close.bind(this));
-    await this.getStats();
   }
 
   /**
@@ -205,16 +204,15 @@ export class Node {
         this.meta = d.data;
         break;
       case "stats":
-        this.stats = d.data;
+        this.stats = d.stats;
         break;
       case "event":
       case "player-update":
         if (this.players.has(d.guildId))
           await this.players.get(d.guildId)._update(d);
         break;
-      default:
-        this.manager.emit("raw", this.name, d);
     }
+    this.manager.emit("raw", this.name, d);
   }
 
   /**
@@ -237,6 +235,11 @@ export class Node {
     this.ws.removeAllListeners();
     this.ws = null;
     return this.reconnect(code, reason);
+  }
+
+  private async _open() {
+    this.manager.emit("open", this.name, this.id);
+    await this.getStats();
   }
 
   /**

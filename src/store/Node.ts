@@ -1,7 +1,7 @@
-import {Collection} from "discord.js";
-import {Node} from "../api/Node";
-import {Manager} from "../Manager";
-import {NodeOptions, NodeStatus} from "../interfaces/Node";
+import { Collection } from "discord.js";
+import { Node } from "../api/Node";
+import { Manager } from "../Manager";
+import { NodeOptions, NodeStatus } from "../interfaces/Node";
 
 export class NodeStore extends Collection<string, Node> {
   public constructor(public readonly manager: Manager) {

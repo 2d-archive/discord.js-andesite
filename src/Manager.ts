@@ -1,12 +1,16 @@
-import {Client, Collection} from "discord.js";
-import {EventEmitter} from "events";
-import {NodeStore} from "./store/Node";
-import {Player} from "./api/Player";
-import {NodeOptions} from "./interfaces/Node";
-import {Node} from "./api/Node";
-import {LoadedTracks, TrackInfo} from "./interfaces/Entities";
+import { Client, Collection } from "discord.js";
+import { EventEmitter } from "events";
+import { NodeStore } from "./store/Node";
+import { Player } from "./api/Player";
+import { NodeOptions } from "./interfaces/Node";
+import { Node } from "./api/Node";
+import { LoadedTracks, TrackInfo } from "./interfaces/Entities";
 
 export interface ManagerOptions {
+  /**
+   * A custom function used for sending packets to discord.
+   */
+  send?: (guildId: string, packet: Packet) => any;
   /**
    * The timeout for HTTP requests.
    * @default 10000
@@ -39,9 +43,10 @@ export interface VoiceServerUpdate {
 }
 
 export interface Packet {
-  t: string;
-  d: any;
-  s: number;
+  op?: string | number;
+  t?: string;
+  d?: any;
+  s?: number;
 }
 
 export interface VoiceStateUpdate {
@@ -100,7 +105,7 @@ export class Manager extends EventEmitter {
 
     const def = <T>(v: T | undefined, def: T): T => v === undefined ? def : v;
     this.defaultVolume = def(options.defaultVolume, 100);
-    this.restTimeout = def(options.restTimeout, 10000);
+    this.restTimeout = def(options.restTimeout, 20000);
     this.reconnectTries = def(options.reconnectTries, 3);
     this.player = def(options.player, Player);
 
@@ -110,7 +115,7 @@ export class Manager extends EventEmitter {
       const player: any = this.players.get(pk.d.guild_id);
       if (!player) return;
 
-      switch(pk.t) {
+      switch (pk.t) {
         case "VOICE_SERVER_UPDATE":
           player.voiceServer = pk.d;
           await player._voiceUpdate();
@@ -145,8 +150,8 @@ export class Manager extends EventEmitter {
     if (!node && !this.nodes.get()) throw new Error(`No node available.`);
     return new Promise<LoadedTracks>((res, rej) => {
       return (<Node>node || this.nodes.get()).rest.get(`/loadtracks?identifier=${query}`)
-      .then(res)
-      .catch(rej);
+        .then(res)
+        .catch(rej);
     });
   }
 
@@ -160,9 +165,9 @@ export class Manager extends EventEmitter {
   public decode(tracks: string | string[], node: Node = this.nodes.get()): Promise<TrackInfo[]> {
     return new Promise((res, rej) => {
       if (!node) return rej(new Error(`No node available.`));
-      return node.rest.post("/decodetracks", {tracks: Array.isArray(tracks) ? tracks : [tracks]})
-      .then((_: TrackInfo[]) => res(_))
-      .catch(rej);
+      return node.rest.post("/decodetracks", { tracks: Array.isArray(tracks) ? tracks : [tracks] })
+        .then((_: TrackInfo[]) => res(_))
+        .catch(rej);
     });
   }
 
@@ -181,7 +186,10 @@ export class Manager extends EventEmitter {
    * @param packet
    * @private
    */
-  public _send(packet: { [key: string]: any }): void {
+  public _send(packet: Packet): void {
+    if (this.options.send && typeof this.options.send === "function")
+      return this.options.send(packet.d.guild_id, packet);
+
     const guild = this.client.guilds.get(packet.d.guild_id);
     if (!guild) return;
     this.client.ws.shards ? guild.shard.send(packet) : (this.client.ws as any).send(packet);

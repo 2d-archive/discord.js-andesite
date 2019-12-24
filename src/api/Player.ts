@@ -1,8 +1,8 @@
-import {EventEmitter} from "events";
-import {Node} from "./Node";
-import {AndesitePlayer, FilterMap, FilterNames} from "../interfaces/Entities";
-import {Packet, VoiceServerUpdate, VoiceStateUpdate} from "../Manager";
-import {RESTManager} from "./RESTManager";
+import { EventEmitter } from "events";
+import { AndesitePlayer, FilterMap, FilterNames } from "../interfaces/Entities";
+import { VoiceServerUpdate, VoiceStateUpdate } from "../Manager";
+import { Node } from "./Node";
+import { RESTManager } from "./RESTManager";
 
 export interface PlayerOptions {
   guildId: string;
@@ -79,6 +79,7 @@ export class Player extends EventEmitter {
    * The state of the voice connection.
    */
   private voiceState?: VoiceStateUpdate;
+  private movingChannels: boolean = false;
 
   public constructor(
     public node: Node,
@@ -161,7 +162,7 @@ export class Player extends EventEmitter {
    * @param {object} options - Options for the filter, you can omit this.
    * @memberof Player
    */
-  public filter<F extends FilterNames>(filter: F, options?: FilterMap[F]): Promise<AndesitePlayer> {
+  public filter<F extends keyof FilterMap>(filter: F, options?: FilterMap[F]): Promise<AndesitePlayer> {
     return this.rest.patch(`${this._endpoint}/filters`, {
       [`${filter}`]: options || {}
     });
@@ -205,11 +206,13 @@ export class Player extends EventEmitter {
         const emit = (event: string, data: any) => this.listenerCount(event) ? this.emit(event, data) : null;
         switch (pk.type) {
           case "TrackEndEvent": {
-            if (pk.reason !== "REPLACED") this.playing = false;
-            this.timestamp = null;
-            this.track = null;
+            if (!this.movingChannels) {
+              if (pk.reason !== "REPLACED") this.playing = false;
+              this.timestamp = null;
+              this.track = null;
 
-            emit("end", pk);
+              emit("end", pk);
+            }
             break;
           }
           case "TrackExceptionEvent":
@@ -238,8 +241,7 @@ export class Player extends EventEmitter {
     try {
       if (!this.track) return this.emit("error", "no track found upon moving to another node.");
 
-      await this.play(this.track, {start: this._player!.position});
-      if (this.filters.equalizer.bands.length) await this.filter("equalizer", {bands: this.filters.equalizer.bands});
+      await this.play(this.track, { start: this._player!.position });
       if (this.volume !== 100) await this.setVolume(this.volume);
       if (node) this.emit("moved", this.guildId, this.node.name);
     } catch (e) {
@@ -253,6 +255,7 @@ export class Player extends EventEmitter {
    * @param {boolean} [reset=false] - Whether to reset the player. (not recommended)
    */
   public async moveVoiceChannel(channelId: string, reset: boolean = false): Promise<boolean> {
+    this.movingChannels = true;
     if (this.channelId === channelId) return Promise.reject(false);
 
     // await this.destroy();
@@ -262,8 +265,10 @@ export class Player extends EventEmitter {
       selfdeaf: this.voiceState.self_deaf,
       selfmute: this.voiceState.self_mute
     });
+    this._voiceUpdate();
 
     if (!reset) await this._moved(false);
+    this.movingChannels = false;
     return Promise.resolve(true);
   }
 
