@@ -33,6 +33,9 @@ An [andesite-node](https://github.com/natanbc/andesite-node) client for [discord
 
 An andesite node via Github [Releases](https://github.com/natanbc/andesite-node/releases)
 
+
+> ***WARNING: using the .jar from the official repository isn't a good idea due to the dependencies being very outdated... use my unofficial jar [https://github.com/lolwastedjs/andesite-node/releases/tag/0.18.10](from github releases)***
+
 ## Implementation
 
 - Manager
