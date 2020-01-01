@@ -7,19 +7,20 @@ import { EventEmitter } from "events";
  * @extends {EventEmitter}
  */
 export class RESTManager extends EventEmitter {
-  public readonly url: string;
-  public axios: AxiosInstance;
   /**
    * The amount of requests for session (node connection, goes back to 0 on reconnect).
    */
   public requests: number = 0;
+  /**
+   * The axios instance used for requests.
+   * @private
+   */
+  private axios: AxiosInstance;
   public constructor(node: Node) {
     super();
 
-    this.url = `http://${node.host}:${node.port}`;
-
     this.axios = axios.create({
-      baseURL: this.url,
+      baseURL: `http://${node.host}:${node.port}`,
       headers: { "User-Id": node.manager.userId },
       timeout: node.manager.restTimeout || 20000
     });

@@ -1,5 +1,5 @@
 import { EventEmitter } from "events";
-import { AndesitePlayer, FilterMap, FilterNames } from "../interfaces/Entities";
+import { AndesitePlayer, FilterMap, StringMap } from "../interfaces/Entities";
 import { VoiceServerUpdate, VoiceStateUpdate } from "../Manager";
 import { Node } from "./Node";
 import { RESTManager } from "./RESTManager";
@@ -64,21 +64,29 @@ export class Player extends EventEmitter {
    */
   public rest: RESTManager;
   /**
+   * The voice server that this player is using.
+   * @private
+   */
+  public _voiceServer?: VoiceServerUpdate;
+  /**
+   * The state of the voice connection.
+   * @private
+   */
+  public _voiceState?: VoiceStateUpdate;
+  /**
    * The endpoint used in "/player/:guild_id" requests.
+   * @private
    */
   public readonly _endpoint: string;
   /**
    * The andesite player object. Direct access to the andesite player.
+   * @private
    */
   private _player?: AndesitePlayer;
   /**
-   * The voice server that this player is using.
+   * Indicates whether the player is in the middle of moving channels
+   * @private
    */
-  private voiceServer?: VoiceServerUpdate;
-  /**
-   * The state of the voice connection.
-   */
-  private voiceState?: VoiceStateUpdate;
   private movingChannels: boolean = false;
 
   public constructor(
@@ -196,7 +204,7 @@ export class Player extends EventEmitter {
    * @private
    * @memberof Player
    */
-  public async _update(pk: { [key: string]: any }): Promise<void> {
+  public async _update(pk: StringMap<any>): Promise<void> {
     switch (pk.op) {
       case "player-update":
         this._player = pk.state;
@@ -276,8 +284,8 @@ export class Player extends EventEmitter {
     this.node.join(
       { guildId: this.guildId, channelId },
       {
-        selfdeaf: this.voiceState.self_deaf,
-        selfmute: this.voiceState.self_mute
+        selfdeaf: this._voiceState.self_deaf,
+        selfmute: this._voiceState.self_mute
       }
     );
     this._voiceUpdate();
@@ -295,8 +303,8 @@ export class Player extends EventEmitter {
   public async _voiceUpdate(): Promise<void> {
     await this.node._send("voice-server-update", {
       guildId: this.guildId,
-      event: this.voiceServer,
-      sessionId: this.voiceState!.session_id
+      event: this._voiceServer,
+      sessionId: this._voiceState!.session_id
     });
   }
 }

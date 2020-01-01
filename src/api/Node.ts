@@ -9,6 +9,7 @@ import {
 } from "../interfaces/Node";
 import { PlayerStore } from "../store/Player";
 import { Player, PlayerOptions } from "./Player";
+import { StringMap } from "../interfaces/Entities";
 
 export interface JoinOptions {
   selfmute?: boolean;
@@ -92,7 +93,6 @@ export class Node {
    * Whether the websocket is open / connected.
    */
   public get connected(): boolean {
-    // @ts-ignore
     return this.ws && this.ws.readyState === WebSocket.OPEN;
   }
 
@@ -110,7 +110,7 @@ export class Node {
    * @param payload
    * @private
    */
-  public _send(op: string, payload?: { [key: string]: any }): Promise<boolean> {
+  public _send(op: string, payload?: StringMap<any>): Promise<boolean> {
     return new Promise((res, rej) => {
       if (!this.connected) throw new Error("this node isn't connected");
       let data;
@@ -184,7 +184,7 @@ export class Node {
    */
   private async _connect(): Promise<void> {
     this.state = NodeStatus.CONNECTING;
-    const headers: { [key: string]: string } = {};
+    const headers: StringMap<string> = {};
     if (this.connected) this.ws.close();
     if (this.id) headers["Andesite-Resume-Id"] = String(this.id);
     if (this.auth) headers["Authorization"] = this.auth;

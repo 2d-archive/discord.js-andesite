@@ -112,17 +112,17 @@ export class Manager extends EventEmitter {
     client.on("raw", async (pk: Packet) => {
       if (!["VOICE_STATE_UPDATE", "VOICE_SERVER_UPDATE"].includes(pk.t)) return;
 
-      const player: any = this.players.get(pk.d.guild_id);
+      const player = this.players.get(pk.d.guild_id);
       if (!player) return;
 
       switch (pk.t) {
         case "VOICE_SERVER_UPDATE":
-          player.voiceServer = pk.d;
+          player._voiceServer = pk.d;
           await player._voiceUpdate();
           break;
         case "VOICE_STATE_UPDATE":
           if (pk.d.user_id !== this.client.user.id) return;
-          player.voiceState = pk.d;
+          player._voiceState = pk.d;
           break;
       }
     });

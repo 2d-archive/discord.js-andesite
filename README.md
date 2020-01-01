@@ -6,7 +6,7 @@
 [![devDependencies Status](https://david-dm.org/lolwastedjs/discord.js-andesite/dev-status.svg)](https://david-dm.org/lolwastedjs/discord.js-andesite?type=dev)
 [![Build Status](https://travis-ci.com/LolWastedJS/discord.js-andesite.svg?branch=master)](https://travis-ci.com/LolWastedJS/discord.js-andesite)
 
-An [andesite-node](https://github.com/natanbc/andesite-node) client for [discord.js](https://npmjs.com/discord.js) master.
+An [andesite-node](https://github.com/natanbc/andesite-node) client for [discord.js](https://npmjs.com/discord.js).
 
 - 📦 has _most_ of the andesite features implemented.
 - 💪 Strongly Typed.
