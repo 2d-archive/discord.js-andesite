@@ -1,8 +1,5 @@
 {
   "extends": "@ayanaware/ts/config",
-  "compilerOptions": {
-    "esModuleInterop": true
-  },
   "typedocOptions": {
     "mode": "modules",
     "out": "docs",

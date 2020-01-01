@@ -29,7 +29,7 @@ export interface ManagerOptions {
    * The default volume for players.
    * @default 50
    */
-  defaultVolume?: number
+  defaultVolume?: number;
   /**
    * The player class to use.
    * @defaults Player*/
@@ -103,7 +103,7 @@ export class Manager extends EventEmitter {
 
     if (!options.nodes) throw new Error("Provide an array of nodes.");
 
-    const def = <T>(v: T | undefined, def: T): T => v === undefined ? def : v;
+    const def = <T>(v: T | undefined, def: T): T => (v === undefined ? def : v);
     this.defaultVolume = def(options.defaultVolume, 100);
     this.restTimeout = def(options.restTimeout, 20000);
     this.reconnectTries = def(options.reconnectTries, 3);
@@ -149,7 +149,8 @@ export class Manager extends EventEmitter {
   public search(query: string, node?: Node): Promise<LoadedTracks> {
     if (!node && !this.nodes.get()) throw new Error(`No node available.`);
     return new Promise<LoadedTracks>((res, rej) => {
-      return (<Node>node || this.nodes.get()).rest.get(`/loadtracks?identifier=${query}`)
+      return (<Node>node || this.nodes.get()).rest
+        .get(`/loadtracks?identifier=${query}`)
         .then(res)
         .catch(rej);
     });
@@ -162,10 +163,16 @@ export class Manager extends EventEmitter {
    * Defaults to an ideal node.
    * @returns {Promise<TrackInfo[]>} the decoded tracks.
    */
-  public decode(tracks: string | string[], node: Node = this.nodes.get()): Promise<TrackInfo[]> {
+  public decode(
+    tracks: string | string[],
+    node: Node = this.nodes.get()
+  ): Promise<TrackInfo[]> {
     return new Promise((res, rej) => {
       if (!node) return rej(new Error(`No node available.`));
-      return node.rest.post("/decodetracks", { tracks: Array.isArray(tracks) ? tracks : [tracks] })
+      return node.rest
+        .post("/decodetracks", {
+          tracks: Array.isArray(tracks) ? tracks : [tracks]
+        })
         .then((_: TrackInfo[]) => res(_))
         .catch(rej);
     });
@@ -192,6 +199,8 @@ export class Manager extends EventEmitter {
 
     const guild = this.client.guilds.get(packet.d.guild_id);
     if (!guild) return;
-    this.client.ws.shards ? guild.shard.send(packet) : (this.client.ws as any).send(packet);
+    this.client.ws.shards
+      ? guild.shard.send(packet)
+      : (this.client.ws as any).send(packet);
   }
 }

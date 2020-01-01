@@ -1,13 +1,18 @@
 import { Manager } from "../Manager";
 import { RESTManager } from "./RESTManager";
-import WebSocket from "ws";
-import { NodeMetadata, NodeOptions, NodeStats, NodeStatus } from "../interfaces/Node";
+import WebSocket = require("ws");
+import {
+  NodeMetadata,
+  NodeOptions,
+  NodeStats,
+  NodeStatus
+} from "../interfaces/Node";
 import { PlayerStore } from "../store/Player";
 import { Player, PlayerOptions } from "./Player";
 
 export interface JoinOptions {
   selfmute?: boolean;
-  selfdeaf?: boolean
+  selfdeaf?: boolean;
 }
 
 export class Node {
@@ -53,17 +58,16 @@ export class Node {
   private readonly auth!: string;
   private readonly url!: string;
 
-  public constructor(
-    public readonly manager: Manager,
-    options: NodeOptions
-  ) {
+  public constructor(public readonly manager: Manager, options: NodeOptions) {
     this.name = options.name;
     this.host = options.host;
     this.port = String(options.port);
 
     Object.defineProperty(this, "auth", { value: options.auth });
     Object.defineProperty(this, "rest", { value: new RESTManager(this) });
-    Object.defineProperty(this, "url", { value: `ws://${options.host}:${options.port}/websocket` });
+    Object.defineProperty(this, "url", {
+      value: `ws://${options.host}:${options.port}/websocket`
+    });
 
     this._connect();
   }
@@ -75,7 +79,9 @@ export class Node {
   get penalties(): number {
     let penalties = 0;
     penalties += this.stats.players.playing;
-    penalties += Math.round(Math.pow(1.05, 100 * this.stats.cpu.system) * 10 - 10);
+    penalties += Math.round(
+      Math.pow(1.05, 100 * this.stats.cpu.system) * 10 - 10
+    );
     if (this.stats.frameStats) {
       penalties += this.stats.frameStats.reduce((a, fs) => a + fs.loss, 0);
     }
@@ -115,7 +121,7 @@ export class Node {
         return rej(false);
       }
 
-      this.ws.send(data, (e: any) => e ? rej(e) : res(true));
+      this.ws.send(data, (e: any) => (e ? rej(e) : res(true)));
     });
   }
 
@@ -124,9 +130,13 @@ export class Node {
    * @param {PlayerOptions} data - The guild & voice channel id for the player.
    * @param {JoinOptions} [options={}] - The options used for creating the player.
    */
-  public join<T = Player>(data: PlayerOptions, { selfmute = false, selfdeaf = false }: JoinOptions = {}): T {
+  public join<T extends Player = Player>(
+    data: PlayerOptions,
+    { selfmute = false, selfdeaf = false }: JoinOptions = {}
+  ): T {
     const guild = this.manager.client.guilds.get(data.guildId);
-    if (!guild) throw new Error(`Guild with id of ${data.guildId} doesn't exist.`);
+    if (!guild)
+      throw new Error(`Guild with id of ${data.guildId} doesn't exist.`);
 
     this.manager._send({
       op: 4,
@@ -138,9 +148,10 @@ export class Node {
       }
     });
 
-    if (this.players.has(data.guildId)) return <T> <unknown> this.players.get(data.guildId)!;
+    if (this.players.has(data.guildId))
+      return <T>this.players.get(data.guildId)!;
 
-    return <T> <unknown> this.players.create(data);
+    return <T>this.players.create(data);
   }
 
   /**
@@ -149,7 +160,10 @@ export class Node {
    */
   public leave(guildId: string): boolean {
     const guild = this.manager.client.guilds.get(guildId);
-    if (!guild) throw new Error(`Guild with id of ${guildId} doesn't exist or the client hasn't acknowledged it yet.`);
+    if (!guild)
+      throw new Error(
+        `Guild with id of ${guildId} doesn't exist or the client hasn't acknowledged it yet.`
+      );
 
     this.manager._send({
       op: 4,
@@ -254,11 +268,14 @@ export class Node {
       try {
         await this._connect();
       } catch (e) {
-        this.manager.emit('error', this.name, e);
+        this.manager.emit("error", this.name, e);
         setInterval(() => this.reconnect(code, reason), 2500);
       }
     } else {
-      await this.manager.nodes.remove(this, `Node couldn't reconnect in ${this.tries} tries.`);
+      await this.manager.nodes.remove(
+        this,
+        `Node couldn't reconnect in ${this.tries} tries.`
+      );
     }
   }
 }

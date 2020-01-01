@@ -42,8 +42,7 @@ export class NodeStore extends Collection<string, Node> {
    * @returns {void}
    */
   public createMany(...data: NodeOptions[]): void {
-    for (const node of data)
-      this.create(node);
+    for (const node of data) this.create(node);
   }
 
   /**
@@ -57,11 +56,12 @@ export class NodeStore extends Collection<string, Node> {
     try {
       this.delete(node.name);
 
-      for (const player of node.players.values()) node.players.move(player, this.get() || this.random());
+      for (const player of node.players.values())
+        node.players.move(player, this.get() || this.random());
 
       if (node["ws"]) {
         node["ws"].removeAllListeners();
-        await node["ws"].close(4011, 'disconnecting node');
+        await node["ws"].close(4011, "disconnecting node");
       }
 
       this.manager.emit("disconnected", node.name, reason);

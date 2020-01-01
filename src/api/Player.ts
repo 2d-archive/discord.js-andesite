@@ -162,7 +162,10 @@ export class Player extends EventEmitter {
    * @param {object} options - Options for the filter, you can omit this.
    * @memberof Player
    */
-  public filter<F extends keyof FilterMap>(filter: F, options?: FilterMap[F]): Promise<AndesitePlayer> {
+  public filter<F extends keyof FilterMap>(
+    filter: F,
+    options?: FilterMap[F]
+  ): Promise<AndesitePlayer> {
     return this.rest.patch(`${this._endpoint}/filters`, {
       [`${filter}`]: options || {}
     });
@@ -176,7 +179,7 @@ export class Player extends EventEmitter {
     this.playing = false;
     this.timestamp = null;
     this.track = null;
-    return this.rest.post(`${this._endpoint}/stop`)
+    return this.rest.post(`${this._endpoint}/stop`);
   }
 
   /**
@@ -203,7 +206,8 @@ export class Player extends EventEmitter {
         this.paused = pk.state.paused;
         break;
       case "event":
-        const emit = (event: string, data: any) => this.listenerCount(event) ? this.emit(event, data) : null;
+        const emit = (event: string, data: any) =>
+          this.listenerCount(event) ? this.emit(event, data) : null;
         switch (pk.type) {
           case "TrackEndEvent": {
             if (!this.movingChannels) {
@@ -239,7 +243,11 @@ export class Player extends EventEmitter {
    */
   public async _moved(node: boolean = true): Promise<boolean | void> {
     try {
-      if (!this.track) return this.emit("error", "no track found upon moving to another node.");
+      if (!this.track)
+        return this.emit(
+          "error",
+          "no track found upon moving to another node."
+        );
 
       await this.play(this.track, { start: this._player!.position });
       if (this.volume !== 100) await this.setVolume(this.volume);
@@ -250,21 +258,28 @@ export class Player extends EventEmitter {
   }
 
   /**
-   * Moves the player to another voice channel
+   * Moves the player to another voice channel  
+   * ! This isn't reliable, we don't recommend using this.
    * @param {string} channelId - The voice channel id to move to.
    * @param {boolean} [reset=false] - Whether to reset the player. (not recommended)
    */
-  public async moveVoiceChannel(channelId: string, reset: boolean = false): Promise<boolean> {
+  public async moveVoiceChannel(
+    channelId: string,
+    reset: boolean = false
+  ): Promise<boolean> {
     this.movingChannels = true;
     if (this.channelId === channelId) return Promise.reject(false);
 
     // await this.destroy();
 
     this.channelId = channelId;
-    this.node.join({ guildId: this.guildId, channelId }, {
-      selfdeaf: this.voiceState.self_deaf,
-      selfmute: this.voiceState.self_mute
-    });
+    this.node.join(
+      { guildId: this.guildId, channelId },
+      {
+        selfdeaf: this.voiceState.self_deaf,
+        selfmute: this.voiceState.self_mute
+      }
+    );
     this._voiceUpdate();
 
     if (!reset) await this._moved(false);

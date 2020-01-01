@@ -3,8 +3,13 @@
  * All Rights Reserved.
  */
 
-const { Manager } = require("../build");
-const { Client, MessageEmbed } = require("discord.js");
+const {
+  Manager
+} = require("../build");
+const {
+  Client,
+  MessageEmbed
+} = require("discord.js");
 
 const queues = {};
 const client = new Client();
@@ -60,7 +65,10 @@ client.on("message", async (message) => {
           return message.channel.send(s(`Please join the voice channel i'm in`));
       } else {
         queues[message.guild.id] = [];
-        player = node.join({ guildId: message.guild.id, channelId: message.member.voice.channelID });
+        player = node.join({
+          guildId: message.guild.id,
+          channelId: message.member.voice.channelID
+        });
       }
 
       const results = await manager.search(args.join(" "), node);
@@ -119,17 +127,21 @@ client.on("message", async (message) => {
       if (!player) return message.channel.send(s(`Use \`!>play <song name or url>\` to start a queue`));
 
       let levels = {
-        high: 0.25,
-        medium: 0.15,
-        low: 0.05,
-        none: 0.00
-      }, i = 0;
+          high: 0.25,
+          medium: 0.15,
+          low: 0.05,
+          none: 0.00
+        },
+        i = 0;
 
       if (levels[args[0]] === undefined)
         return message.channel.send(s(`Sorry, the available levels are ${Object.keys(levels).map((_, i, a) => `${i >= a.length ? " and " : ""}**${_}**`).join(", ")}`))
 
       await player.filter("equalizer", {
-        bands: Array(3).fill(null).map(() => ({ band: i++, gain: levels[args[0]] }))
+        bands: Array(3).fill(null).map(() => ({
+          band: i++,
+          gain: levels[args[0]]
+        }))
       });
       return message.channel.send(s(`Set the bassboost to **${args[0]}**\n*takes a few seconds to take affect*`));
     }

@@ -1,6 +1,6 @@
-import axios, {AxiosInstance, AxiosRequestConfig, AxiosResponse} from "axios";
-import {Node} from "./Node";
-import {EventEmitter} from "events";
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
+import { Node } from "./Node";
+import { EventEmitter } from "events";
 
 /**
  * Handles REST requests to an andesite node.
@@ -24,7 +24,7 @@ export class RESTManager extends EventEmitter {
       timeout: node.manager.restTimeout || 20000
     });
 
-    if (node["auth"] !== undefined) 
+    if (node["auth"] !== undefined)
       this.axios.defaults.headers.common.Authorization = node["auth"];
   }
 
@@ -35,12 +35,13 @@ export class RESTManager extends EventEmitter {
    */
   public get(endpoint: string, config?: AxiosRequestConfig): Promise<any> {
     return new Promise((resolve, reject) => {
-      return this.axios.get(endpoint, config)
-      .then((res: AxiosResponse) => {
-        this.requests++;
-        return resolve(res.data)
-      })
-      .catch(reject);
+      return this.axios
+        .get(endpoint, config)
+        .then((res: AxiosResponse) => {
+          this.requests++;
+          return resolve(res.data);
+        })
+        .catch(reject);
     });
   }
 
@@ -50,14 +51,19 @@ export class RESTManager extends EventEmitter {
    * @param {*} data - The data to post.
    * @param {AxiosRequestConfig} [config] - Config to use for the request.
    */
-  public post(endpoint: string, data?: any, config?: AxiosRequestConfig): Promise<any> {
+  public post(
+    endpoint: string,
+    data?: any,
+    config?: AxiosRequestConfig
+  ): Promise<any> {
     return new Promise((resolve, reject) => {
-      return this.axios.post(endpoint, data, config)
-      .then((res: AxiosResponse) => {
-        this.requests++;
-        return resolve(res.data)
-      })
-      .catch(reject);
+      return this.axios
+        .post(endpoint, data, config)
+        .then((res: AxiosResponse) => {
+          this.requests++;
+          return resolve(res.data);
+        })
+        .catch(reject);
     });
   }
 
@@ -67,14 +73,19 @@ export class RESTManager extends EventEmitter {
    * @param {any} data - The data to patch.
    * @param {AxiosRequestConfig} [config] - Config to use for the request.
    */
-  public patch(endpoint: string, data?: any, config?: AxiosRequestConfig): Promise<any> {
+  public patch(
+    endpoint: string,
+    data?: any,
+    config?: AxiosRequestConfig
+  ): Promise<any> {
     return new Promise((resolve, reject) => {
-      return this.axios.patch(endpoint, data, config)
-      .then((res: AxiosResponse) => {
-        this.requests++;
-        return resolve(res.data)
-      })
-      .catch(reject);
+      return this.axios
+        .patch(endpoint, data, config)
+        .then((res: AxiosResponse) => {
+          this.requests++;
+          return resolve(res.data);
+        })
+        .catch(reject);
     });
   }
 
@@ -85,12 +96,13 @@ export class RESTManager extends EventEmitter {
    */
   public delete(endpoint: string, config?: AxiosRequestConfig): Promise<any> {
     return new Promise((resolve, reject) => {
-      return this.axios.delete(endpoint, config)
-      .then((res: AxiosResponse) => {
-        this.requests++;
-        return resolve(res.data)
-      })
-      .catch(reject);
+      return this.axios
+        .delete(endpoint, config)
+        .then((res: AxiosResponse) => {
+          this.requests++;
+          return resolve(res.data);
+        })
+        .catch(reject);
     });
   }
 }

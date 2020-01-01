@@ -43,7 +43,3 @@ package-lock.json
 example/config.json
 yarn.lock
 /test/
-
-# WIP
-
-FilterManager.*

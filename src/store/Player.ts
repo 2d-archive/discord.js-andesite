@@ -5,7 +5,7 @@ import { Node } from "../api/Node";
 export class PlayerStore extends Collection<string, Player> {
   public constructor(public node: Node) {
     super();
-  };
+  }
 
   static get [Symbol.species](): typeof Map {
     return <any>Collection;
@@ -17,7 +17,7 @@ export class PlayerStore extends Collection<string, Player> {
    * @returns {Player} a new player.
    */
   public create(options: PlayerOptions): Player {
-    const player = new (this.node.manager.player)(this.node, options);
+    const player = new this.node.manager.player(this.node, options);
     this.set(options.guildId, player);
     return player;
   }
