@@ -1,5 +1,5 @@
 import { EventEmitter } from "events";
-import { AndesitePlayer, FilterMap, StringMap } from "../interfaces/Entities";
+import { AndesitePlayer, FilterMap } from "../interfaces/Entities";
 import { VoiceServerUpdate, VoiceStateUpdate } from "../Manager";
 import { Node } from "./Node";
 import { RESTManager } from "./RESTManager";
@@ -204,7 +204,7 @@ export class Player extends EventEmitter {
    * @private
    * @memberof Player
    */
-  public async _update(pk: StringMap<any>): Promise<void> {
+  public async _update(pk: Record<string, any>): Promise<void> {
     switch (pk.op) {
       case "player-update":
         this._player = pk.state;
@@ -266,7 +266,7 @@ export class Player extends EventEmitter {
   }
 
   /**
-   * Moves the player to another voice channel  
+   * Moves the player to another voice channel
    * ! This isn't reliable, we don't recommend using this.
    * @param {string} channelId - The voice channel id to move to.
    * @param {boolean} [reset=false] - Whether to reset the player. (not recommended)

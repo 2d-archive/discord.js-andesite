@@ -1,15 +1,9 @@
+import { NodeMetadata, NodeOptions, NodeStats, NodeStatus } from "../interfaces/Node";
 import { Manager } from "../Manager";
-import { RESTManager } from "./RESTManager";
-import WebSocket = require("ws");
-import {
-  NodeMetadata,
-  NodeOptions,
-  NodeStats,
-  NodeStatus
-} from "../interfaces/Node";
 import { PlayerStore } from "../store/Player";
 import { Player, PlayerOptions } from "./Player";
-import { StringMap } from "../interfaces/Entities";
+import { RESTManager } from "./RESTManager";
+import WebSocket = require("ws");
 
 export interface JoinOptions {
   selfmute?: boolean;
@@ -110,7 +104,7 @@ export class Node {
    * @param payload
    * @private
    */
-  public _send(op: string, payload?: StringMap<any>): Promise<boolean> {
+  public _send(op: string, payload?: Record<string, any>): Promise<boolean> {
     return new Promise((res, rej) => {
       if (!this.connected) throw new Error("this node isn't connected");
       let data;
@@ -134,7 +128,7 @@ export class Node {
     data: PlayerOptions,
     { selfmute = false, selfdeaf = false }: JoinOptions = {}
   ): T {
-    const guild = this.manager.client.guilds.get(data.guildId);
+    const guild = this.manager.client.guilds.resolve(data.guildId);
     if (!guild)
       throw new Error(`Guild with id of ${data.guildId} doesn't exist.`);
 
@@ -159,7 +153,7 @@ export class Node {
    * @param guildId - The guild to leave.
    */
   public leave(guildId: string): boolean {
-    const guild = this.manager.client.guilds.get(guildId);
+    const guild = this.manager.client.guilds.resolve(guildId);
     if (!guild)
       throw new Error(
         `Guild with id of ${guildId} doesn't exist or the client hasn't acknowledged it yet.`
@@ -184,7 +178,7 @@ export class Node {
    */
   private async _connect(): Promise<void> {
     this.state = NodeStatus.CONNECTING;
-    const headers: StringMap<string> = {};
+    const headers: Record<string, string> = {};
     if (this.connected) this.ws.close();
     if (this.id) headers["Andesite-Resume-Id"] = String(this.id);
     if (this.auth) headers["Authorization"] = this.auth;

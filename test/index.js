@@ -22,7 +22,7 @@ const manager = new Manager(client, {
   }],
   defaultVolume: 50,
   send(guildId, packet) {
-    const guild = client.guilds.get(guildId);
+    const guild = client.guilds.resolve(guildId);
     if (!guild) return;
     console.log(packet);
     return guild.shard.send(packet);
@@ -179,6 +179,7 @@ client.on("message", async (message) => {
 
       queues[message.guild.id] = [];
       await player.stop();
+
       return message.channel.send(s(`Stopped the player, use \`i>play <song name or url>\` to play a song`));
     }
   }

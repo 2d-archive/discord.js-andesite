@@ -15,7 +15,7 @@ An [andesite-node](https://github.com/natanbc/andesite-node) client for [discord
 [Support](https://discord.gg/kzaSTx) •
 [Github](https://github.com/lolwastedjs/discord.js-andesite) •
 [NPM](https://npmjs.com/discord.js-andesite) •
-[Documentation](https://melike2d.ml/discord.js-andesite)
+[Documentation](https://melike2d.me/discord.js-andesite)
 
 ## Installation
 
@@ -30,7 +30,7 @@ An [andesite-node](https://github.com/natanbc/andesite-node) client for [discord
 
 An andesite node via Github [Releases](https://github.com/natanbc/andesite-node/releases)
 
-> **_WARNING: using the .jar from the official repository isn't a good idea due to the dependencies being very outdated... use my unofficial jar. (use the one with -all)_** <https://mega.nz/#!NvRgESSB!BXToxq1CVEztEk0knzh2L8ypLmcLiuEsJr8hLxpmE1s>
+> **_WARNING: using the .jar from the official repository isn't a good idea due to the dependencies being very outdated... use my unofficial jar._** <https://mega.nz/#!NvRgESSB!BXToxq1CVEztEk0knzh2L8ypLmcLiuEsJr8hLxpmE1s>
 
 ## Implementation
 

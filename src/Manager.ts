@@ -197,9 +197,9 @@ export class Manager extends EventEmitter {
     if (this.options.send && typeof this.options.send === "function")
       return this.options.send(packet.d.guild_id, packet);
 
-    const guild = this.client.guilds.get(packet.d.guild_id);
+    const guild = this.client.guilds.resolve(packet.d.guild_id);
     if (!guild) return;
-    this.client.ws.shards
+    return this.client.ws.shards
       ? guild.shard.send(packet)
       : (this.client.ws as any).send(packet);
   }
