@@ -11,9 +11,9 @@
     "discord.js": "discordjs/discord.js"
   },
   "scripts": {
-    "prepublishOnly": "yarn compile",
+    "prepublishOnly": "npm run compile",
     "compile": "ayc clean build",
-    "build:docs": "typedoc --out docs src/lib --theme node_modules/eledoc/bin/default/",
+    "build:docs": "typedoc --out docs src/ --theme node_modules/eledoc/bin/default/",
     "test": "node test/index.js"
   },
   "author": "MeLike2D <ml2dofficial@gmail.com>",
