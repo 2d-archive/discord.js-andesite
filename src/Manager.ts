@@ -110,17 +110,17 @@ export class Manager extends EventEmitter {
     this.player = def(options.player, Player);
 
     client.ws.on("VOICE_SERVER_UPDATE", (pk) => {
-      const player = this.players.get(pk.d.guild_id);
+      const player = this.players.get(pk.guild_id);
       if (!player) return;
-      player._voiceServer = pk.d;
+      player._voiceServer = pk;
       return player._voiceUpdate();
     });
 
     client.ws.on("VOICE_STATE_UPDATE", (pk) => {
-      if (pk.d.user_id !== this.client.user.id) return;
-      const player = this.players.get(pk.d.guild_id);
+      if (pk.user_id !== this.client.user.id) return;
+      const player = this.players.get(pk.guild_id);
       if (!player) return;
-      return (player._voiceState = pk.d);
+      return (player._voiceState = pk);
     });
   }
 

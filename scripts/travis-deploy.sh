@@ -17,7 +17,7 @@ SHA=$(git rev-parse --verify HEAD)
 TARGET_BRANCH="gh-pages"
 git clone $REPO dist -b $TARGET_BRANCH
 
-yarn build:docs
+npm run build:docs
 
 rsync -vau docs/ dist/
 

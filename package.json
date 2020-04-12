@@ -1,6 +1,6 @@
 {
   "name": "discord.js-andesite",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "description": "A reliable, feature rich and stable andesite client for discord.js.",
   "dependencies": {
     "axios": "^0.19.2",
@@ -8,7 +8,7 @@
   },
   "package": "MIT",
   "peerDependencies": {
-    "discord.js": "discordjs/discord.js"
+    "discord.js": "^12.1.1"
   },
   "scripts": {
     "prepublishOnly": "npm run compile",
@@ -22,15 +22,14 @@
     "@types/axios": "^0.14.0",
     "@types/node": "^12.12.35",
     "@types/ws": "^6.0.4",
-    "discord.js": "github:discordjs/discord.js",
+    "discord.js": "^12.1.1",
     "eledoc": "^0.2.1",
-    "tslint": "^5.20.1",
-    "typedoc": "latest",
+    "typedoc": "^0.17.4",
     "typescript": "^3.8.3"
   },
   "main": "build/index.js",
   "license": "MIT",
-  "homepage": "https://github.com/LolWastedJS/discord.js-andesite#readme",
+  "homepage": "https://melike2d.me/discord.js-andesite",
   "bugs": {
     "url": "https://github.com/LolWastedJS/discord.js-andesite/issues"
   },

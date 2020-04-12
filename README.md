@@ -19,6 +19,8 @@ An [andesite-node](https://github.com/natanbc/andesite-node) client for [discord
 
 ## Installation
 
+Please don't use the `.jar` file from the official andesite-node repository as it's dependencies are severely outdated and in return you can't use it... so please download the `andesite-node-0.19.0-all.jar` from [here](https://github.com/LolWastedJS/andesite-node/releases). The setup shouldn't be any different from the official jar.
+
 - stable
 
   > `npm install discord.js-andesite`  
@@ -29,8 +31,6 @@ An [andesite-node](https://github.com/natanbc/andesite-node) client for [discord
   > `yarn add lolwastedjs/discord.js-andesite`
 
 An andesite node via Github [Releases](https://github.com/natanbc/andesite-node/releases)
-
-> **_WARNING: using the .jar from the official repository isn't a good idea due to the dependencies being very outdated... use my unofficial jar._** <https://mega.nz/#!NvRgESSB!BXToxq1CVEztEk0knzh2L8ypLmcLiuEsJr8hLxpmE1s>
 
 ## Implementation
 
