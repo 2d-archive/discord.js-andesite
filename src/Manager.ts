@@ -109,22 +109,18 @@ export class Manager extends EventEmitter {
     this.reconnectTries = def(options.reconnectTries, 3);
     this.player = def(options.player, Player);
 
-    client.on("raw", async (pk: Packet) => {
-      if (!["VOICE_STATE_UPDATE", "VOICE_SERVER_UPDATE"].includes(pk.t)) return;
-
+    client.ws.on("VOICE_SERVER_UPDATE", (pk) => {
       const player = this.players.get(pk.d.guild_id);
       if (!player) return;
+      player._voiceServer = pk.d;
+      return player._voiceUpdate();
+    });
 
-      switch (pk.t) {
-        case "VOICE_SERVER_UPDATE":
-          player._voiceServer = pk.d;
-          await player._voiceUpdate();
-          break;
-        case "VOICE_STATE_UPDATE":
-          if (pk.d.user_id !== this.client.user.id) return;
-          player._voiceState = pk.d;
-          break;
-      }
+    client.ws.on("VOICE_STATE_UPDATE", (pk) => {
+      if (pk.d.user_id !== this.client.user.id) return;
+      const player = this.players.get(pk.d.guild_id);
+      if (!player) return;
+      return (player._voiceState = pk.d);
     });
   }
 
@@ -171,7 +167,7 @@ export class Manager extends EventEmitter {
       if (!node) return rej(new Error(`No node available.`));
       return node.rest
         .post("/decodetracks", {
-          tracks: Array.isArray(tracks) ? tracks : [tracks]
+          tracks: Array.isArray(tracks) ? tracks : [tracks],
         })
         .then((_: TrackInfo[]) => res(_))
         .catch(rej);
